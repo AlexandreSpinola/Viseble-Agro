@@ -77,7 +77,7 @@ A rede recebe 26 variáveis, todas construídas para serem estacionárias ou lim
 		& \texttt{selic\_meta} & Meta Selic, \% a.a. \\
 		Clima & \texttt{chuva\_arabica\_30d}, \texttt{chuva\_arabica\_90d} & Chuva acumulada, média de Sul de Minas, Cerrado e Mogiana \\
 		& \texttt{tmin\_arabica\_7d} & Mínima das temperaturas mínimas em 7 dias nas três regiões \\
-		& \texttt{geada\_30d} & Indicador de $T_{\min} < 3\,^{\circ}$C entre maio e setembro nos últimos 30 dias \\
+		& \texttt{geada\_30d} & Indicador de $T_{\min} < 3\,^{\circ}$C entre maio e setembro nos últimos 30 dias. Constante igual a zero em toda a série: a reanálise não registra mínima abaixo de 3\,$^{\circ}$C em nenhum dos quatro pontos. Mantida como entrada inerte (ver \autoref{sec3:eda}) \\
 		& \texttt{chuva\_robusta\_90d} & Chuva acumulada em Colatina, ES \\
 		Fundos & \texttt{cot\_net\_pct\_oi} & Posição líquida não comercial sobre o \textit{open interest} \\
 		& \texttt{cot\_net\_pct\_oi\_chg4w} & Variação da anterior em 20 dias úteis \\
@@ -88,6 +88,28 @@ A rede recebe 26 variáveis, todas construídas para serem estacionárias ou lim
 \end{quadro}
 
 Não há defasagens explícitas além das que a janela de entrada de 63 dias úteis fornece; a dependência temporal de prazo mais longo aparece como retornos acumulados e razões com médias móveis. A bienalidade da cultura é codificada como indicador binário do ano-safra de carga cheia, definido como o ano-safra que começa em julho de ano par.
+
+\subsection{Análise exploratória das variáveis}\label{sec3:eda}
+
+Antes do treinamento, cada variável foi confrontada com o alvo de cada horizonte no conjunto de treino por correlação de Spearman, e as variáveis foram confrontadas entre si para identificar colinearidade. A correlação de postos foi preferida à de Pearson porque as relações esperadas não são lineares e a estatística é robusta a valores extremos, frequentes em retornos. A \autoref{fig:corr-alvo} apresenta a correlação com o alvo por horizonte e a \autoref{fig:matriz-corr} a matriz entre variáveis.
+
+\begin{figure}[htb]
+	\centering
+	\caption{Correlação de Spearman entre cada variável de entrada e o log-retorno futuro em 21, 63 e 126 dias úteis, no conjunto de treino.}\label{fig:corr-alvo}
+	\includegraphics[width=0.95\textwidth]{imgs/10_corr_features_alvo.png}
+	\fonte{Do autor (2026).}
+\end{figure}
+
+\begin{figure}[htb]
+	\centering
+	\caption{Matriz de correlação de Spearman entre as variáveis de entrada, no conjunto de treino.}\label{fig:matriz-corr}
+	\includegraphics[width=0.95\textwidth]{imgs/11_matriz_corr_features.png}
+	\fonte{Do autor (2026).}
+\end{figure}
+
+Três padrões orientaram as decisões seguintes. Primeiro, o sinal está nas variáveis de oferta, de base e de calendário, e cresce com o horizonte: o acumulado de chuva de 90 dias nas regiões de arábica tem correlação de $-0{,}37$ com o retorno de 63 dias, a base físico-futuro de $-0{,}34$ com o de 126 dias, o acumulado de 30 dias de $-0{,}31$ com o de 126 dias, a mínima de sete dias de $-0{,}26$ e a meta Selic de $-0{,}23$ no mesmo horizonte. O sinal negativo da chuva é o esperado: chuva abundante na floração melhora a expectativa da safra seguinte e o mercado a precifica para baixo. Segundo, as variáveis de curto prazo carregam pouco ou nenhum sinal: retornos diários, retorno de 21 dias, posição em relação às médias de um e três meses e volatilidade têm correlação inferior a $0{,}04$ em módulo em todos os horizontes. Terceiro, clima e calendário medem em parte a mesma coisa, a estação do ano: as correlações entre a codificação do mês e os acumulados de chuva e a mínima de temperatura ficam entre $0{,}7$ e $0{,}8$, e os acumulados de chuva de 90 dias das regiões de arábica e de robusta têm correlação $0{,}9$. Também são quase redundantes as razões com as médias de um e dois anos ($0{,}9$) e o retorno de 21 dias com a razão à média de um mês ($0{,}8$).
+
+Nenhuma variável foi removida com base nessa análise. A rede recorrente tolera colinearidade entre entradas, o \textit{dropout} penaliza a dependência de uma única variável, e a contribuição de cada grupo é medida diretamente, por ablação e por importância por permutação, no \autoref{sec:resultados}. A colinearidade entre clima e calendário, porém, condiciona a leitura dessas medidas: ao remover um dos grupos, o outro pode compensá-lo em parte. A análise revelou ainda que o indicador de geada é constante igual a zero em toda a série, porque a reanálise ERA5 nunca registra temperatura mínima abaixo de 3\,$^{\circ}$C nos quatro pontos de grade escolhidos, nem mesmo em julho de 2021. A variável foi mantida entre as 26 entradas, onde é inerte após a normalização, e a consequência para a validade de construção é discutida no \autoref{sec:ameacas}.
 
 \subsection{Partição temporal e normalização}
 
@@ -130,17 +152,26 @@ em que $P$ é o indicador CEPEA em R\$/sc. O preço projetado é reconstruído p
 		\hline
 		\textbf{Elemento} & \textbf{Configuração} \\ \hline
 		Entrada & Janela de 63 dias úteis $\times$ 26 variáveis \\
-		Camadas & LSTM(64, sequências) $\to$ Dropout 0,2 $\to$ LSTM(32) $\to$ Dropout 0,2 $\to$ Dense(32, ReLU) $\to$ Dense(3, linear) \\
+		Camadas & LSTM(32, sequências) $\to$ Dropout 0,4 $\to$ LSTM(16) $\to$ Dropout 0,4 $\to$ Dense(32, ReLU) $\to$ Dense(3, linear) \\
 		Saídas & Log-retorno em 21, 63 e 126 dias úteis \\
 		Função de perda & Erro quadrático médio sobre os log-retornos \\
 		Otimizador & Adam, taxa inicial $10^{-3}$, redução por patamar (fator 0,5, paciência 7) \\
-		Treinamento & Até 100 épocas, lote 32, parada antecipada na perda de validação (paciência 15, restaura os melhores pesos) \\
+		Treinamento & Até 100 épocas, lote 32, parada antecipada na perda de validação (paciência 15, restaura os melhores pesos); o modelo final parou na época 26 \\
+		Seleção & Unidades e \textit{dropout} escolhidos por busca no conjunto de validação (\autoref{sec3:busca-hp}); janela, lote, taxa e paciências fixados a priori \\
 		Reprodutibilidade & Semente 42; execução em CPU \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{quadro}
 
 Além da previsão central, o módulo estima a incerteza da previsão pelo desvio-padrão dos resíduos $\hat{y}_h - y_h$ no conjunto de validação, um valor por horizonte. Esse desvio é o único canal pelo qual a qualidade da previsão chega ao motor de decisão: quanto maior o erro histórico da rede em um horizonte, mais largo é o cone de preços que o motor considera nesse horizonte.
+
+\subsection{Busca de hiperparâmetros}\label{sec3:busca-hp}
+
+A configuração inicial do módulo preditivo foi fixada a priori, antes de qualquer experimento: 64 unidades na primeira camada recorrente e 32 na segunda, \textit{dropout} 0,2, janela de 63 dias úteis, escolhida por cobrir um trimestre, igual ao horizonte intermediário, lote 32 e taxa de aprendizado $10^{-3}$. Para verificar se essa capacidade era adequada a uma amostra de 3\,940 janelas de treino, foi conduzida uma busca em duas etapas, sobre o conjunto de validação e sem uso do conjunto de teste para escolher.
+
+Na primeira etapa, uma grade de doze configurações variou um fator por vez a partir da configuração inicial: unidades (32 e 128), \textit{dropout} (0 e 0,4), janela (21 e 126 dias), taxa de aprendizado ($3 \times 10^{-4}$ e $3 \times 10^{-3}$) e lote (64), além de duas candidatas enxutas com 32 unidades e \textit{dropout} 0,4, uma com janela de 63 e outra de 126 dias. Cada configuração foi treinada uma única vez, com semente 42 e o mesmo critério de parada antecipada, e comparada pelo RMSE em cada horizonte e pela média dos três horizontes na validação. O RMSE de treino foi registrado como indicador de sobreajuste: uma configuração que erra muito menos no treino do que na validação está memorizando a amostra.
+
+Na segunda etapa, as três configurações mais promissoras, a inicial e as duas de 32 unidades com janela de 63 dias, foram retreinadas com cinco sementes (42 a 46) e avaliadas na validação e no teste, reportando média e desvio-padrão entre sementes ao lado dos métodos de referência. A escolha do modelo final foi feita pela média de validação; as métricas de teste dessa etapa servem apenas para confirmar que a ordem entre as candidatas não é um artefato do conjunto de validação. Os resultados da busca estão na \autoref{sec2:res-hp}, e a implicação de ter selecionado a arquitetura na validação é tratada como ameaça à validade interna no \autoref{sec:ameacas}.
 
 \subsection{Módulo prescritivo}
 
@@ -196,6 +227,8 @@ O custo operacional efetivo (COE) entra no motor como piso econômico da comerci
 
 \paragraph{Base e \textit{hedge}.} A base é definida em percentual do futuro convertido, $b = (P - F_{\text{R\$}}) / F_{\text{R\$}}$, em que $F_{\text{R\$}}$ é o \textit{Coffee C} convertido de centavos de dólar por libra-peso para reais por saca de 60 kg pela PTAX do dia. A modelagem em percentual, e não em reais, decorre da observação de que a base em reais escala com o nível de preço. A base esperada por mês do ano e o risco de base por horizonte (desvio-padrão da variação da base) são estimados de 2015 até o fim do conjunto de treino. O contrato ICE convertido é usado como \textit{proxy} do contrato ICF da B3, cuja série histórica não está disponível publicamente.
 
+\paragraph{Operação em política rolante.} Em uso corrente, o sistema é executado a cada data de decisão com a janela de 63 dias úteis encerrada naquela data; a rede recebe apenas dados já observados e publicados até ela, respeitando as datas de disponibilidade descritas na \autoref{sec2:pipeline}. A previsão nova substitui a anterior, o horizonte de seis meses é recontado a partir da nova data e a política é resolvida de novo. Uma saca que foi armazenada no mês anterior é, portanto, reavaliada com a informação mais recente e vendida assim que a ação ótima do novo estado for vender, mesmo que a política do mês anterior previsse mantê-la por mais tempo. O produtor recebe, a cada mês, a ação do dia, o gatilho de venda por mês futuro e a distribuição de probabilidade do mês de venda. É esse mecanismo rolante que o \textit{backtest} e a simulação por safra reproduzem. Neste estudo a rede foi treinada uma única vez, com dados até junho de 2022, e não é retreinada entre decisões; a periodicidade de retreino em operação é uma decisão de implantação, discutida no \autoref{sec:discussao}.
+
 \section{Protocolo de Avaliação}\label{sec2:protocolo}
 
 \subsection{Avaliação preditiva (RQ1)}
@@ -207,7 +240,9 @@ A acurácia é medida no conjunto de validação e no conjunto de teste, por hor
 	\item \textbf{ARIMA} sobre o log-preço diário, com ordem $(p,d,q)$, $p,q \in \{0,1,2\}$, selecionada por AIC no conjunto de treino; parâmetros fixos, previsão recursiva a partir de cada data.
 \end{alineas}
 
-A contribuição das variáveis exógenas é medida por ablação: a rede é retreinada com a mesma configuração removendo, um por vez, cada um de seis grupos de variáveis (retornos e médias móveis; mercado; calendário e Selic; clima; fundos; insumos), com três sementes por configuração, e a variação relativa do RMSE médio por horizonte é registrada. Como referência para a variabilidade de treino, o modelo completo é ainda treinado com cinco sementes distintas.
+A seleção da arquitetura segue o protocolo da \autoref{sec3:busca-hp}: grade de doze configurações com semente única e verificação das candidatas com cinco sementes. Como referência para a variabilidade de treino, o modelo final é treinado com cinco sementes distintas, e toda diferença entre modelos menor que o desvio-padrão entre sementes é tratada como empate.
+
+A contribuição das variáveis exógenas é medida por três instrumentos complementares. A correlação de Spearman com o alvo, calculada antes do treinamento (\autoref{sec3:eda}), indica onde há sinal nos dados. A importância por permutação mede, no modelo final treinado, o aumento do RMSE de validação quando os valores de uma variável são embaralhados dentro da janela de entrada, na média de três permutações; ela indica de quais variáveis a rede efetivamente depende. A ablação, por fim, retreina a rede com a mesma configuração removendo, um por vez, cada um de seis grupos de variáveis (retornos e médias móveis; mercado; calendário e Selic; clima; fundos; insumos), com três sementes por configuração, e registra a variação relativa do RMSE médio por horizonte; ela indica o que se perde quando o grupo não está disponível.
 
 \subsection{Avaliação prescritiva (RQ2)}
 
@@ -228,10 +263,12 @@ As duas primeiras são as heurísticas nomeadas na RQ2. As demais foram acrescen
 
 O mesmo protocolo é aplicado às 18 datas mensais do período de validação, de julho de 2022 a dezembro de 2023, que contém regime de queda de preços, ampliando a amostra para 38 decisões em quatro safras. Nesse período a dispersão residual e a parada antecipada da rede foram calibradas com os próprios dados, o que é declarado como viés favorável leve ao interpretar os resultados. A significância das diferenças de receita é avaliada por diferença pareada por data, com intervalo de confiança de 95\,\% por \textit{bootstrap} de 10\,000 reamostragens e teste de Wilcoxon pareado.
 
+\paragraph{Simulação por safra.} O \textit{backtest} mensal avalia vinte decisões independentes, cada uma com uma saca recém-colhida, o que mede a qualidade média da política, mas não reproduz a situação do produtor, que colhe uma vez por ano. Por isso o mesmo motor é avaliado em uma segunda forma: uma saca colhida no primeiro dia útil de julho de cada ano-safra, de 2022 a 2025, com até doze meses para ser vendida. A política é rolante, como descrito na \autoref{sec2:operacionalizacao}: a cada mês o motor é resolvido de novo com a previsão daquela data e o prazo restante, e a saca é vendida no primeiro mês em que a ação ótima for vender. Como o horizonte de doze meses excede o alcance de 126 dias da rede, além desse ponto a deriva prevista é mantida no último valor e a incerteza cresce com a raiz do tempo, como em um passeio aleatório, extrapolação conservadora que só afeta os meses finais de uma trajetória que é reavaliada mensalmente. As mesmas estratégias de referência são simuladas no horizonte de doze meses e a receita é expressa em valor presente na data da colheita. As safras 2024/25 e 2025/26 são cegas; 2022/23 e 2023/24 pertencem ao período de validação, com o viés já declarado.
+
 \subsection{Análise de sensibilidade (RQ3)}
 
 A sensibilidade é avaliada repetindo o \textit{backtest} completo sob uma grade de parâmetros e registrando a receita líquida média e a frequência de decisões de armazenar. A grade cobre a aversão a risco ($\lambda \in \{0; 0{,}25; 0{,}5; 1\}$), o custo de armazenagem ($\{1{,}5; 2{,}5; 5{,}0\}$ R\$/sc/mês), a taxa de desconto (8, 10, 12, 13,25 e 15\,\% a.a., além da Selic vigente em cada data) e o choque de base (deslocamento de $\pm 5$ pontos percentuais na base esperada e duplicação do risco de base). O caso base adota taxa de desconto de 10\,\% a.a., valor próximo à média da Selic na amostra.
 
 \subsection{Ambiente de execução}
 
-Todos os experimentos foram executados em Python, com Keras para a rede neural e NumPy para o motor de decisão, em CPU, com semente fixa. O código está organizado em quatro cadernos numerados (coleta, variáveis, previsão e decisão) e em módulos reutilizáveis, de modo que cada tabela e figura dos capítulos seguintes pode ser regenerada a partir dos dados brutos.
+Todos os experimentos foram executados em Python 3.13, com TensorFlow 2.21 e Keras 3.15 para a rede neural, NumPy 2.5 e SciPy 1.18 para o motor de decisão, pandas 3.0 para o alinhamento dos dados, scikit-learn 1.9 para a normalização e statsmodels 0.15 para o ARIMA, em um computador pessoal com Windows 11, em CPU, sem aceleração por GPU, e com semente fixa. O código está organizado em cinco cadernos numerados (coleta, variáveis, previsão, decisão e simulação por safra) e em módulos reutilizáveis, de modo que cada tabela e figura dos capítulos seguintes pode ser regenerada a partir dos dados brutos. O código, os dados e os resultados intermediários estão versionados em um repositório Git.

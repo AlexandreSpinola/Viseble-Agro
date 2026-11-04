@@ -96,7 +96,7 @@ Legenda: **[EXP]** depende do chat de experimentos ou de execução pelo autor; 
 
 ## 9. Fechamento
 
-- [ ] **[TXT]** `refbib.bib`: substituir as 37 entradas VERIFICAR pelo .bib do mapeamento; referência do AgroSafety (autoria/ano).
+- [x] **[TXT]** `refbib.bib`: 20 entradas do mapeamento conferidas no JabRef (04/11); AgroSafety = Fontes, R. E. (UFLA/DAE), confirmar ano e título oficial do curso. Os 10 artigos colados pelo autor em 04/11 são fabricados (DOIs apontam para outros trabalhos): não usar.
 - [ ] **[TXT]** Resumo/abstract com os números finais.
 - [ ] **[TXT]** Figuras 10–12 incluídas no texto (EDA); conferir legendas de todas as 14.
 - [ ] **[TXT]** Compilar (`latexmk -pdf -interaction=nonstopmode tcc_agrovisible.tex`), checar listas de figuras/tabelas/quadros, referências cruzadas, "??" e avisos de overfull.
