@@ -1,0 +1,33 @@
+\chapter{\MakeUppercase{Introdução}}\label{sec:introducao}
+
+\section{Contexto}
+
+O Brasil é o maior produtor e exportador mundial de café arábica, e Minas Gerais concentra a maior parte dessa produção. Para o cafeicultor, porém, colher a safra é apenas metade do problema econômico; a outra metade é decidir quando vendê-la. O café é uma commodity armazenável, cotada em dólar em bolsa internacional, e seu preço físico no Brasil oscila com a oferta mundial, com o câmbio, com o clima nas regiões produtoras e com a bienalidade da própria cultura, que alterna anos de carga cheia e de carga baixa. Entre julho de 2024 e maio de 2025, o indicador CEPEA/ESALQ do arábica subiu de 1\,362 para 2\,590 reais por saca, quase dobrando em dez meses, e no ano seguinte recuou a 1\,750 antes de voltar a subir. Um produtor que vendeu toda a safra na colheita de 2024 recebeu pouco mais da metade do que receberia seis meses depois; um que armazenou a safra de 2022 viu o preço cair 40\,\% em um ano.
+
+Na prática, a decisão de venda é tomada com heurísticas. Vende-se na colheita, por necessidade de caixa ou por aversão ao risco; vende-se em parcelas mensais, para diluir o preço médio; vende-se quando o preço cruza uma média móvel ou atinge uma meta de margem sobre o custo de produção. Cada regra funciona em um regime de mercado e falha em outro, e o produtor não sabe de antemão em qual regime está. Cooperativas e tradings, do outro lado do balcão, acompanham a curva de futuros, o câmbio e a posição dos fundos diariamente, o que configura uma assimetria de informação que o produtor individual raramente consegue reduzir.
+
+\section{Problema e hipótese}
+
+Armazenar café tem custo: a tarifa do armazém, a quebra técnica e, sobretudo, o custo de oportunidade do capital imobilizado, que em um ambiente de juros de dois dígitos supera os custos físicos por larga margem. Armazenar só compensa se a valorização esperada superar esse custo de carregamento, e a valorização esperada depende de uma previsão de preço que ninguém faz com precisão. O problema que este trabalho enfrenta é, portanto, de decisão sequencial sob incerteza: a cada mês, dado o preço corrente, uma previsão imperfeita do preço futuro e os custos de carregamento, vender ou manter o estoque, e, se mantiver, por quanto tempo.
+
+A hipótese do trabalho é que uma previsão modesta, que acerte a direção do preço nos horizontes de três a seis meses sem acertar sua magnitude, tem valor econômico quando acoplada a uma regra de decisão que respeita custos e incerteza, e que esse valor pode ser medido em reais por saca contra as heurísticas que o produtor já usa. A literatura sobre previsão de preços agrícolas, revisada no \autoref{sec:fundamentacao}, encerra-se quase sempre na métrica de erro da previsão; a pergunta sobre o que fazer com ela permanece sem resposta.
+
+\section{Objetivos}
+
+O objetivo geral é construir e avaliar empiricamente o AgroVisible, uma ferramenta de apoio à decisão que prescreve quando vender o café arábica colhido, combinando um módulo preditivo, uma rede neural recorrente do tipo LSTM alimentada por variáveis exógenas de mercado, clima, câmbio, posição de fundos e insumos, com um módulo prescritivo, um processo de decisão de Markov resolvido por programação dinâmica que desconta armazenagem, quebra técnica e custo de oportunidade e admite a proteção em futuros como terceira ação.
+
+Esse objetivo foi decomposto em três questões de pesquisa, formuladas em detalhe no \autoref{sec:configuracao}:
+
+\begin{alineas}
+	\item \textbf{RQ1, preditiva:} em que medida a rede LSTM com variáveis exógenas supera, em erro e em acerto de direção, os métodos de referência disponíveis ao produtor, o passeio aleatório, o ARIMA e a curva de futuros ajustada pela base sazonal, nos horizontes de 21, 63 e 126 dias úteis, e qual a contribuição de cada grupo de variáveis;
+	\item \textbf{RQ2, prescritiva:} qual é o ganho financeiro líquido, em reais por saca em valor presente, da política prescrita pelo motor em comparação com a venda imediata e a venda parcelada, sob a mesma contabilidade de custos, em safras fora da amostra de treino;
+	\item \textbf{RQ3, de robustez:} quão sensível é a política a variações na taxa Selic, no custo de armazenagem, na base e no grau de aversão a risco do produtor.
+\end{alineas}
+
+\section{Contribuições}
+
+O trabalho oferece quatro contribuições. A primeira é metodológica: um protocolo de avaliação econômica para modelos de previsão de preços agrícolas, com \textit{backtest} rolante em safras cegas, contabilidade explícita de custos de carregamento, comparação com a curva de futuros e com as heurísticas do produtor, e testes de significância pareados. A segunda é a própria ferramenta, com o módulo preditivo e o prescritivo desacoplados por uma interface mínima, o que permite trocar o estimador sem alterar o motor. A terceira é empírica: a evidência de que, em quatro safras de 2022 a 2026, cobrindo uma queda de 40\,\%, uma recuperação, uma alta de 84\,\% e um platô, a política obteve 6,1\,\% a mais que a venda imediata e 9,0\,\% a mais que a venda parcelada, com significância estatística, ainda que a rede perca para o passeio aleatório no horizonte de um mês; e a evidência contrária, de que uma única decisão de venda total na colheita pode anular esse ganho. A quarta é a base de dados alinhada sem vazamento temporal, com vinte e seis variáveis de cinco famílias de fontes públicas, de 2005 a 2026, reproduzível a partir do código e dos dados brutos versionados.
+
+\section{Organização do texto}
+
+O texto segue a estrutura recomendada para estudos empíricos em Engenharia de Software \cite{Wohlin2012}. O \autoref{sec:fontes} descreve as famílias de dados que alimentam a ferramenta e o papel de cada uma. O \autoref{sec:fundamentacao} apresenta a fundamentação técnica, o mapeamento sistemático da literatura e a lacuna que o trabalho preenche. O \autoref{sec:configuracao} detalha a configuração do estudo: as questões de pesquisa, a engenharia de dados, a arquitetura dos dois módulos, a busca de hiperparâmetros e o protocolo de avaliação. O \autoref{sec:resultados} apresenta os resultados por questão de pesquisa, o \autoref{sec:discussao} os interpreta em conjunto e extrai implicações para a pesquisa, para os produtores e para quem constrói ferramentas, e o \autoref{sec:ameacas} discute as ameaças à validade. O \autoref{sec:conclusao} sintetiza as respostas, as limitações e os trabalhos futuros.

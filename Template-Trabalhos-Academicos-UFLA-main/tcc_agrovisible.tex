@@ -237,24 +237,24 @@ pdfkeywords={café arábica; LSTM; programação dinâmica; sistema de apoio à 
 % As palavras-chave PRECISAM vir primeiro
 \palchaves{café arábica; comercialização; LSTM; programação dinâmica; sistema de apoio à decisão.}
 \resumo{%
-Resumo a ser escrito ao final.
+O cafeicultor brasileiro decide quando vender a safra colhida com heurísticas que funcionam em um regime de preços e falham em outro, enquanto armazenar tem custo de armazenagem, quebra técnica e, sobretudo, custo de oportunidade do capital. Este trabalho constrói e avalia o AgroVisible, uma ferramenta de apoio prescritivo à decisão que acopla uma rede LSTM, alimentada por 26 variáveis exógenas de preço físico e futuro, câmbio, Selic, clima, posição de fundos e insumos, a um processo de decisão de Markov resolvido por programação dinâmica, que desconta os custos de carregamento, incorpora a incerteza da previsão e admite a proteção em futuros como terceira ação. A avaliação segue um protocolo de estudo empírico com três questões de pesquisa, partição cronológica por ano-safra, teste cego nas safras 2024/25 e 2025/26 e análise de sensibilidade. A rede, com 32 e 16 unidades escolhidas por busca em validação e verificadas com cinco sementes, não supera o passeio aleatório no horizonte de 21 dias úteis, mas vence o passeio aleatório, o ARIMA e a curva de futuros nos horizontes de 63 e 126 dias no teste, com acerto direcional de 76 e 77\,\%. Em \textit{backtest} de vinte decisões mensais cegas, a política obteve 2\,186 reais por saca em valor presente, 7,8\,\% a mais que a venda imediata e 9,2\,\% a mais que a venda parcelada, com significância a 5\,\%; em quatro safras, cobrindo queda, recuperação, alta e platô, o ganho foi de 6,1 e 9,0\,\%, com captura de 94\,\% do valor de um oráculo. A política é insensível à Selic, à tarifa de armazenagem e à base, e só se altera com a aversão a risco. A simulação por safra, com uma única decisão na colheita, revela o limite da abordagem: uma venda total em julho de 2024 perdeu a alta daquela safra. A contribuição principal é a evidência de que a avaliação de modelos preditivos para comercialização agrícola deve ir além da métrica de erro, e de que uma previsão modesta gera valor econômico quando acoplada a uma regra de decisão que respeita custos e incerteza.
 }
 
 % Abstract e keywords
 % As keywords PRECISAM vir primeiro
 \keywords{arabica coffee; marketing; LSTM; dynamic programming; decision support system.}
 \abstract{%
-Abstract to be written at the end.
+Brazilian coffee growers decide when to sell the harvested crop using heuristics that work in one price regime and fail in another, while storing coffee incurs warehousing, technical shrinkage and, above all, the opportunity cost of capital. This work builds and evaluates AgroVisible, a prescriptive decision support tool that couples an LSTM network, fed with 26 exogenous variables on physical and futures prices, exchange rate, policy rate, weather, fund positioning and input prices, to a Markov decision process solved by dynamic programming, which discounts carrying costs, incorporates forecast uncertainty and admits futures hedging as a third action. The evaluation follows an empirical study protocol with three research questions, chronological partition by crop year, blind testing on the 2024/25 and 2025/26 crops and sensitivity analysis. The network, with 32 and 16 units selected by validation search and verified with five seeds, does not beat the random walk at the 21-business-day horizon, but beats the random walk, ARIMA and the futures curve at the 63- and 126-day horizons on the test set, with directional accuracy of 76 and 77\,\%. In a backtest of twenty blind monthly decisions, the policy earned 2,186 reais per bag in present value, 7.8\,\% more than immediate sale and 9.2\,\% more than staggered sale, significant at the 5\,\% level; over four crops covering a fall, a recovery, a rally and a plateau, the gains were 6.1 and 9.0\,\%, capturing 94\,\% of an oracle's value. The policy is insensitive to the policy rate, storage fees and basis, and changes only with risk aversion. A per-crop simulation with a single decision at harvest reveals the limit of the approach: a full sale in July 2024 missed that crop's rally. The main contribution is evidence that the evaluation of predictive models for agricultural marketing must go beyond error metrics, and that a modest forecast creates economic value when coupled with a decision rule that respects costs and uncertainty.
 }
 
 % Indicadores de impacto
 \indicadoresdeimpacto{%
-A ser escrito ao final.
+O trabalho entrega ao cafeicultor e às cooperativas uma regra de venda mensal, com gatilho de preço por mês e leitura da margem sobre o custo de produção da CONAB, que em quatro safras rendeu 6,1\,\% a mais por saca que a venda na colheita; o código, os dados alinhados e os resultados são abertos e reproduzíveis em um computador pessoal.
 }
 
 % Impact indicators
 \impactindicators{%
-To be written at the end.
+The work delivers to coffee growers and cooperatives a monthly selling rule, with a price trigger per month and a reading of the margin over CONAB's production cost, which over four crops yielded 6.1\,\% more per bag than selling at harvest; the code, the aligned data and the results are open and reproducible on a personal computer.
 }
 
 % Listas gerais
@@ -285,13 +285,13 @@ To be written at the end.
 % É recomendado que as seções sejam organizadas em arquivos separados
 % e incluídas no documento com o comando \include
 \include{secoes/01-fontes}
-%\include{secoes/02-introducao}
+\include{secoes/02-introducao}
 \include{secoes/03-fundamentacao}
 \include{secoes/04-configuracao}
 \include{secoes/05-resultados}
 \include{secoes/06-discussao}
 \include{secoes/07-ameacas}
-%\include{secoes/08-conclusao}
+\include{secoes/08-conclusao}
 
 %==============================================================================
 % Bibliografia

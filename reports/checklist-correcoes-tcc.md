@@ -19,17 +19,17 @@ Legenda: **[EXP]** depende do chat de experimentos ou de execução pelo autor; 
 
 ## 1. Seção 1: Fontes de dados (`01-fontes.tex`)
 
-- [ ] **[TXT]** Linha 23–25: dizer que o indicador de geada (Tmin < 3 °C) nunca é acionado na reanálise ERA5 nos quatro pontos; a geada de julho de 2021 não está representada na feature. Apontar para a ameaça de construção (seção 7) e trabalho futuro (limiar 5 °C ou anomalia de Tmin).
-- [ ] **[TXT]** Conferir COE "714 a 876" (ok) e demais números contra o dossiê.
+- [x] **[TXT]** Linha 23–25: dizer que o indicador de geada (Tmin < 3 °C) nunca é acionado na reanálise ERA5 nos quatro pontos; a geada de julho de 2021 não está representada na feature. Apontar para a ameaça de construção (seção 7) e trabalho futuro (limiar 5 °C ou anomalia de Tmin).
+- [x] **[TXT]** Conferir COE "714 a 876" (ok) e demais números contra o dossiê.
 
 ## 2. Seção 2: Introdução (`02-introducao.tex`, hoje é o exemplo do template)
 
-- [ ] **[TXT]** Escrever: contexto (comercialização do café, bienalidade, volatilidade 2024–2026), problema (quando e quanto vender; heurísticas do produtor), objetivo, RQ1–RQ3, contribuições (pipeline sem vazamento, baseline de curva de futuros, motor MDP com hedge e COE, protocolo de avaliação econômica), organização do texto.
-- [ ] **[TXT]** Descomentar `\include{secoes/02-introducao}` em `tcc_agrovisible.tex` (linha 288).
+- [x] **[TXT]** Escrever: contexto (comercialização do café, bienalidade, volatilidade 2024–2026), problema (quando e quanto vender; heurísticas do produtor), objetivo, RQ1–RQ3, contribuições (pipeline sem vazamento, baseline de curva de futuros, motor MDP com hedge e COE, protocolo de avaliação econômica), organização do texto.
+- [x] **[TXT]** Descomentar `\include{secoes/02-introducao}` em `tcc_agrovisible.tex` (linha 288).
 
 ## 3. Seção 3: Fundamentação (`03-fundamentacao.tex`)
 
-- [ ] **[TXT]** Reler; não há números do modelo. Conferir citações marcadas VERIFICAR.
+- [x] **[TXT]** Reler; não há números do modelo. Conferir citações marcadas VERIFICAR.
 
 ## 4. Seção 4: Configuração (`04-configuracao.tex`)
 
@@ -67,37 +67,37 @@ Legenda: **[EXP]** depende do chat de experimentos ou de execução pelo autor; 
 
 ## 6. Seção 6: Discussão (`06-discussao.tex`)
 
-- [ ] **[TXT]** Abertura: LSTM perde para RW só em 21 d na validação; perde para a curva só em 63 d; sobreajuste reduzido pela busca; direção 92 % (val) / 77 % (teste) em 126 d.
-- [ ] **[TXT]** Mecanismo 1 (assimetria): exceções agora set/2022 (−26 %) e jun/2023 (−11 %).
-- [ ] **[TXT]** Mecanismo 2 (incerteza): λ = 0,25 corta a frequência sem perder receita; λ = 0,5 já elimina o ganho. Reescrever.
-- [ ] **[TXT]** "Onde a ferramenta falha": trocar a narrativa da safra 2024/25. Falhas a discutir: 1º/07/2024 (previsão negativa de 21 d na véspera da alta; na simulação por safra isso custou a alta inteira), set/2022 e jun/2023 (alta prevista em queda persistente), e a magnitude: em jul–out/2024 o y_126d previsto era ≈0 ou negativo enquanto o realizado foi +0,5; o ganho veio da direção de 21 d e da política rolante, não da previsão longa.
-- [ ] **[TXT]** Sazonalidade: parágrafo novo com os números do CSV (jun–out abaixo, dez–fev acima); armazenar captura esse ganho estrutural; é por isso que o motor armazena em julho–outubro e vende no verão. Ligar com fig. 06 (gatilho) e com `mes_sin/mes_cos` e `bienalidade_alta` no topo da importância por permutação.
-- [ ] **[TXT]** Implicações para a pesquisa: "curva supera em dois de três horizontes" → um (63 d). Ranking RMSE × valor econômico ainda vale em 21 d na validação.
-- [ ] **[TXT]** Implicações para produtores: AgroVis é a melhor estratégia não oráculo em 3 de 4 safras e no total; perde só em 2022/23.
-- [ ] **[TXT]** Construtores de ferramentas: treino ≈ 1 min; acrescentar diretriz sobre busca de hiperparâmetros enxuta (rede menor generaliza melhor com 3 940 amostras).
-- [ ] **[TXT]** Usar a EDA: sinal em oferta/base/calendário sustenta a escolha das features; retornos de curto prazo são ruído.
+- [x] **[TXT]** Abertura: LSTM perde para RW só em 21 d na validação; perde para a curva só em 63 d; sobreajuste reduzido pela busca; direção 92 % (val) / 77 % (teste) em 126 d.
+- [x] **[TXT]** Mecanismo 1 (assimetria): exceções agora set/2022 (−26 %) e jun/2023 (−11 %).
+- [x] **[TXT]** Mecanismo 2 (incerteza): λ = 0,25 corta a frequência sem perder receita; λ = 0,5 já elimina o ganho. Reescrever.
+- [x] **[TXT]** "Onde a ferramenta falha": trocar a narrativa da safra 2024/25. Falhas a discutir: 1º/07/2024 (previsão negativa de 21 d na véspera da alta; na simulação por safra isso custou a alta inteira), set/2022 e jun/2023 (alta prevista em queda persistente), e a magnitude: em jul–out/2024 o y_126d previsto era ≈0 ou negativo enquanto o realizado foi +0,5; o ganho veio da direção de 21 d e da política rolante, não da previsão longa.
+- [x] **[TXT]** Sazonalidade: parágrafo novo com os números do CSV (jun–out abaixo, dez–fev acima); armazenar captura esse ganho estrutural; é por isso que o motor armazena em julho–outubro e vende no verão. Ligar com fig. 06 (gatilho) e com `mes_sin/mes_cos` e `bienalidade_alta` no topo da importância por permutação.
+- [x] **[TXT]** Implicações para a pesquisa: "curva supera em dois de três horizontes" → um (63 d). Ranking RMSE × valor econômico ainda vale em 21 d na validação.
+- [x] **[TXT]** Implicações para produtores: AgroVis é a melhor estratégia não oráculo em 3 de 4 safras e no total; perde só em 2022/23.
+- [x] **[TXT]** Construtores de ferramentas: treino ≈ 1 min; acrescentar diretriz sobre busca de hiperparâmetros enxuta (rede menor generaliza melhor com 3 940 amostras).
+- [x] **[TXT]** Usar a EDA: sinal em oferta/base/calendário sustenta a escolha das features; retornos de curto prazo são ruído.
 
 ## 7. Seção 7: Ameaças (`07-ameacas.tex`)
 
-- [ ] **[TXT]** Conclusão: p = 0,046 / 0,002 / 0,021 / < 0,001; IC largo (+53 a +267); n = 20 e 38 continuam pequenos; fração positiva 35 / 36,8 %.
-- [ ] **[TXT]** Variabilidade de treino: desvio 0,014/0,014/0,030; curva × LSTM 63 d robusta só na média de 5 seeds; ablação interpretável em 126 d para 3 grupos.
-- [ ] **[TXT]** Construção: novo parágrafo "Feature de geada inerte" (ERA5 em 4 pontos de grade nunca registra Tmin < 3 °C; a geada de 2021 não está representada; limiar e resolução espacial).
-- [ ] **[TXT]** Interna, "Seleção do modelo final": reescrever. Houve busca na validação (12 configurações + 5 seeds); a seed 42 é favorável; o σ residual vem da validação. Mitigação: teste cego, média ± desvio reportada, candidatas verificadas também no teste (F5).
-- [ ] **[TXT]** Interna, "Sobreajuste": RMSE treino 0,047 vs 0,096–0,166; a busca reduziu de 0,029; ablação não mostra mais ganho ao remover grupos (exceto insumos em 126 d).
-- [ ] **[TXT]** Externa, "Regime de mercado": "a geada de 2021 está no treino" → o período a contém, a feature não.
-- [ ] **[TXT]** Acrescentar: simulação por safra com 1 decisão/safra é mais sensível à data de entrada que o backtest mensal.
+- [x] **[TXT]** Conclusão: p = 0,046 / 0,002 / 0,021 / < 0,001; IC largo (+53 a +267); n = 20 e 38 continuam pequenos; fração positiva 35 / 36,8 %.
+- [x] **[TXT]** Variabilidade de treino: desvio 0,014/0,014/0,030; curva × LSTM 63 d robusta só na média de 5 seeds; ablação interpretável em 126 d para 3 grupos.
+- [x] **[TXT]** Construção: novo parágrafo "Feature de geada inerte" (ERA5 em 4 pontos de grade nunca registra Tmin < 3 °C; a geada de 2021 não está representada; limiar e resolução espacial).
+- [x] **[TXT]** Interna, "Seleção do modelo final": reescrever. Houve busca na validação (12 configurações + 5 seeds); a seed 42 é favorável; o σ residual vem da validação. Mitigação: teste cego, média ± desvio reportada, candidatas verificadas também no teste (F5).
+- [x] **[TXT]** Interna, "Sobreajuste": RMSE treino 0,047 vs 0,096–0,166; a busca reduziu de 0,029; ablação não mostra mais ganho ao remover grupos (exceto insumos em 126 d).
+- [x] **[TXT]** Externa, "Regime de mercado": "a geada de 2021 está no treino" → o período a contém, a feature não.
+- [x] **[TXT]** Acrescentar: simulação por safra com 1 decisão/safra é mais sensível à data de entrada que o backtest mensal.
 
 ## 8. Seção 8: Conclusão (`08-conclusao.tex`, hoje é o exemplo do template)
 
-- [ ] **[TXT]** Síntese por RQ com os números finais.
-- [ ] **[TXT]** Limitações: 21 d sem valor; seleção na validação; amostra pequena; geada inerte; custos estimados; hedge sem margem; preço regional.
-- [ ] **[TXT]** Trabalhos futuros: prever excedente sobre a curva; ponderar horizontes; feature de geada (limiar 5 °C / anomalia); features de oferta (estoques ICE, CONAB, USDA); venda parcelada dentro do motor; opções PUT; app móvel; multicultura; avaliação em janela rolante retreinando por safra.
-- [ ] **[TXT]** Descomentar `\include{secoes/08-conclusao}` (linha 294).
+- [x] **[TXT]** Síntese por RQ com os números finais.
+- [x] **[TXT]** Limitações: 21 d sem valor; seleção na validação; amostra pequena; geada inerte; custos estimados; hedge sem margem; preço regional.
+- [x] **[TXT]** Trabalhos futuros: prever excedente sobre a curva; ponderar horizontes; feature de geada (limiar 5 °C / anomalia); features de oferta (estoques ICE, CONAB, USDA); venda parcelada dentro do motor; opções PUT; app móvel; multicultura; avaliação em janela rolante retreinando por safra.
+- [x] **[TXT]** Descomentar `\include{secoes/08-conclusao}` (linha 294).
 
 ## 9. Fechamento
 
 - [x] **[TXT]** `refbib.bib`: 20 entradas do mapeamento conferidas no JabRef (04/11); AgroSafety = Fontes, R. E. (UFLA/DAE), confirmar ano e título oficial do curso. Os 10 artigos colados pelo autor em 04/11 são fabricados (DOIs apontam para outros trabalhos): não usar.
-- [ ] **[TXT]** Resumo/abstract com os números finais.
-- [ ] **[TXT]** Figuras 10–12 incluídas no texto (EDA); conferir legendas de todas as 14.
-- [ ] **[TXT]** Compilar (`latexmk -pdf -interaction=nonstopmode tcc_agrovisible.tex`), checar listas de figuras/tabelas/quadros, referências cruzadas, "??" e avisos de overfull.
+- [x] **[TXT]** Resumo/abstract com os números finais.
+- [x] **[TXT]** Figuras 10–12 incluídas no texto (EDA); conferir legendas de todas as 14.
+- [x] **[TXT]** Compilar (`latexmk -pdf -interaction=nonstopmode tcc_agrovisible.tex`), checar listas de figuras/tabelas/quadros, referências cruzadas, "??" e avisos de overfull.
 - [ ] **[TXT]** Leitura de ponta a ponta: "Agro Visible" vs "AgroVisible" (padronizar), "23 de setembro", "64 unidades", "quatro cadernos", "125 segundos", "dois minutos".
