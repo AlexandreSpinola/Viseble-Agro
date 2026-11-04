@@ -1,12 +1,66 @@
 \chapter{\MakeUppercase{Resultados Experimentais}}\label{sec:resultados}
 
-Este capítulo apresenta os resultados na ordem das questões de pesquisa. A \autoref{sec2:res-rq1} avalia o componente preditivo; a \autoref{sec2:res-rq2} apresenta o \textit{backtest} financeiro; a \autoref{sec2:res-rq3} apresenta a análise de sensibilidade. Todos os experimentos foram executados em 23 de setembro de 2026 com a configuração descrita no \autoref{sec:configuracao}. O caso base do motor prescritivo usa armazenagem de 2,50 R\$/sc/mês, quebra técnica de 0,2 \%/mês, taxa de desconto de 10 \% a.a., neutralidade a risco ($\lambda = 0$) e \textit{hedge} habilitado; a Selic vigente em cada data é tratada como um dos cenários de sensibilidade.
+Este capítulo apresenta os resultados na ordem das questões de pesquisa. A \autoref{sec2:res-rq1} avalia o componente preditivo, começando pela busca de hiperparâmetros que definiu o modelo final; a \autoref{sec2:res-rq2} apresenta o \textit{backtest} financeiro e a simulação por safra; a \autoref{sec2:res-rq3} apresenta a análise de sensibilidade. Todos os experimentos foram executados em 4 de novembro de 2026 com a configuração descrita no \autoref{sec:configuracao}. O caso base do motor prescritivo usa armazenagem de 2,50 R\$/sc/mês, quebra técnica de 0,2 \%/mês, taxa de desconto de 10 \% a.a., neutralidade a risco ($\lambda = 0$) e \textit{hedge} habilitado; a Selic vigente em cada data é tratada como um dos cenários de sensibilidade.
 
 \section{Resultados para a RQ1: acurácia preditiva}\label{sec2:res-rq1}
 
+\subsection{Seleção da configuração da rede}\label{sec2:res-hp}
+
+A \autoref{tab:rq1-hp-grade} apresenta a primeira etapa da busca de hiperparâmetros, a grade de doze configurações treinadas com semente única, ordenada pelo RMSE médio dos três horizontes na validação. A configuração inicial, com 64 unidades e \textit{dropout} 0,2, ocupa a nona posição. Variar a janela de entrada, o tamanho do lote ou a taxa de aprendizado a partir dela não produz ganho consistente, e remover o \textit{dropout} piora. O único fator com efeito claro e monotônico é o tamanho da rede: as três configurações com 32 unidades ocupam as três primeiras posições, e a de 128 unidades é a pior. O RMSE de treino conta a mesma história pelo outro lado. A configuração inicial erra 0,029 no treino contra 0,19 na validação, e a de 128 unidades 0,028; a configuração enxuta com \textit{dropout} 0,4 erra 0,047 no treino, ou seja, memoriza menos a amostra e generaliza melhor.
+
+\begin{table}[htb]
+	\centering
+	\caption{Busca de hiperparâmetros, primeira etapa: doze configurações treinadas com semente 42, ordenadas pelo RMSE médio dos três horizontes na validação. A configuração inicial está destacada.}\label{tab:rq1-hp-grade}
+	\footnotesize
+	\setlength{\tabcolsep}{3.5pt}
+	\begin{tabular}{r r r r r r r r r r r}
+		\hline
+		\textbf{Unid.} & \textbf{Dropout} & \textbf{Janela} & \textbf{Taxa} & \textbf{Lote} & \textbf{Épocas} & \textbf{RMSE treino} & \textbf{21 d} & \textbf{63 d} & \textbf{126 d} & \textbf{Média} \\ \hline
+		32  & 0,4 & 63  & $10^{-3}$          & 32 & 26 & 0,047 & 0,096 & 0,166 & 0,128 & \textbf{0,130} \\
+		32  & 0,2 & 63  & $10^{-3}$          & 32 & 26 & 0,037 & 0,096 & 0,162 & 0,138 & 0,132 \\
+		32  & 0,4 & 126 & $10^{-3}$          & 32 & 24 & 0,049 & 0,096 & 0,171 & 0,134 & 0,134 \\
+		64  & 0,4 & 63  & $10^{-3}$          & 32 & 25 & 0,043 & 0,104 & 0,200 & 0,169 & 0,157 \\
+		64  & 0,2 & 126 & $10^{-3}$          & 32 & 16 & 0,035 & 0,115 & 0,189 & 0,170 & 0,158 \\
+		64  & 0,2 & 21  & $10^{-3}$          & 32 & 16 & 0,036 & 0,106 & 0,189 & 0,185 & 0,160 \\
+		64  & 0,2 & 63  & $10^{-3}$          & 64 & 16 & 0,039 & 0,109 & 0,171 & 0,203 & 0,161 \\
+		64  & 0,2 & 63  & $3 \times 10^{-4}$ & 32 & 23 & 0,042 & 0,114 & 0,193 & 0,182 & 0,163 \\
+		\textit{64} & \textit{0,2} & \textit{63} & $\mathit{10^{-3}}$ & \textit{32} & \textit{55} & \textit{0,029} & \textit{0,112} & \textit{0,194} & \textit{0,185} & \textit{0,164} \\
+		64  & 0   & 63  & $10^{-3}$          & 32 & 17 & 0,016 & 0,123 & 0,200 & 0,175 & 0,166 \\
+		64  & 0,2 & 63  & $3 \times 10^{-3}$ & 32 & 40 & 0,024 & 0,124 & 0,204 & 0,223 & 0,184 \\
+		128 & 0,2 & 63  & $10^{-3}$          & 32 & 19 & 0,028 & 0,121 & 0,220 & 0,240 & 0,194 \\ \hline
+	\end{tabular}
+	\fonte{Do autor (2026).}
+\end{table}
+
+Um resultado de semente única pode ser sorte de inicialização. A \autoref{tab:rq1-hp-seeds} apresenta a segunda etapa: as três candidatas retreinadas com cinco sementes, em validação e em teste, ao lado dos dois métodos de referência. Com cinco sementes a vantagem da rede enxuta diminui, mas permanece: na validação, a configuração de 32 unidades com \textit{dropout} 0,4 melhora a inicial em 8 \% em 21 dias, 4 \% em 63 e 19 \% em 126, com desvio entre sementes igual ou menor; no teste, melhora em 8 \%, 4 \% e 2 \%. A média de validação da semente 42 (0,130) é melhor do que a média das cinco sementes (0,147), isto é, a semente 42 é uma semente favorável, fato que é levado em conta na leitura dos resultados seguintes e tratado no \autoref{sec:ameacas}. Com base na média de validação, a configuração de 32 unidades, \textit{dropout} 0,4 e janela de 63 dias foi adotada como modelo final, e todos os resultados deste capítulo referem-se a ela.
+
+\begin{table}[htb]
+	\centering
+	\caption{Busca de hiperparâmetros, segunda etapa: RMSE por horizonte das três candidatas, média $\pm$ desvio-padrão entre cinco sementes, em validação e teste, e RMSE dos métodos de referência nos mesmos conjuntos.}\label{tab:rq1-hp-seeds}
+	\footnotesize
+	\setlength{\tabcolsep}{3.5pt}
+	\begin{tabular}{l l r r r r}
+		\hline
+		\textbf{Conjunto} & \textbf{Configuração} & \textbf{21 d} & \textbf{63 d} & \textbf{126 d} & \textbf{Direção 126 d} \\ \hline
+		Validação & 32 unidades, dropout 0,4 & 0,105 $\pm$ 0,014 & 0,181 $\pm$ 0,014 & \textbf{0,155 $\pm$ 0,030} & 83,1 $\pm$ 7,5 \% \\
+		          & 32 unidades, dropout 0,2 & 0,111 $\pm$ 0,014 & 0,179 $\pm$ 0,023 & 0,177 $\pm$ 0,037 & 77,0 $\pm$ 10,6 \% \\
+		          & 64 unidades, dropout 0,2 (inicial) & 0,114 $\pm$ 0,008 & 0,188 $\pm$ 0,017 & 0,192 $\pm$ 0,024 & 74,1 $\pm$ 8,2 \% \\
+		          & Passeio aleatório & \textbf{0,091} & 0,177 & 0,236 & --- \\
+		          & Curva de futuros & 0,107 & \textbf{0,156} & 0,193 & 75,3 \% \\ \hline
+		Teste     & 32 unidades, dropout 0,4 & \textbf{0,120 $\pm$ 0,003} & \textbf{0,216 $\pm$ 0,012} & \textbf{0,287 $\pm$ 0,024} & 76,8 $\pm$ 8,2 \% \\
+		          & 32 unidades, dropout 0,2 & 0,128 $\pm$ 0,007 & 0,217 $\pm$ 0,018 & 0,295 $\pm$ 0,029 & 72,3 $\pm$ 12,6 \% \\
+		          & 64 unidades, dropout 0,2 (inicial) & 0,131 $\pm$ 0,011 & 0,224 $\pm$ 0,013 & 0,294 $\pm$ 0,019 & 75,7 $\pm$ 4,4 \% \\
+		          & Passeio aleatório & 0,120 & 0,233 & 0,321 & --- \\
+		          & Curva de futuros & 0,130 & 0,227 & 0,309 & 61,2 \% \\ \hline
+	\end{tabular}
+	\fonte{Do autor (2026).}
+\end{table}
+
+A tabela antecipa também o limite do componente preditivo: em 21 dias nenhuma configuração, com nenhuma semente, supera o passeio aleatório na validação, e em 63 dias a curva de futuros segue melhor na validação. O valor da rede está nos horizontes de 63 e 126 dias e, sobretudo, na direção.
+
 \subsection{LSTM contra os métodos de referência}
 
-A \autoref{tab:rq1-metricas} apresenta as métricas da rede e dos três métodos de referência nos conjuntos de validação e de teste, por horizonte. As métricas de erro estão no espaço do log-retorno; o MAPE é o erro percentual equivalente no preço reconstruído.
+A \autoref{tab:rq1-metricas} apresenta as métricas do modelo final e dos três métodos de referência nos conjuntos de validação e de teste, por horizonte. As métricas de erro estão no espaço do log-retorno; o MAPE é o erro percentual equivalente no preço reconstruído.
 
 \begin{table}[htb]
 	\centering
@@ -17,54 +71,63 @@ A \autoref{tab:rq1-metricas} apresenta as métricas da rede e dos três métodos
 		\hline
 		\textbf{Conjunto} & \textbf{Horiz.} & \multicolumn{4}{c}{\textbf{LSTM}} & \multicolumn{3}{c}{\textbf{RMSE das referências}} \\
 		& & RMSE & MAE & MAPE & Direção & Passeio aleat. & ARIMA(1,1,2) & Curva futuros \\ \hline
-		Validação & 21 d  & 0,112 & 0,081 & 8,7  & 55,6 & \textbf{0,091} & \textbf{0,090} & 0,107 \\
-		          & 63 d  & 0,194 & 0,158 & 17,6 & 60,8 & 0,177 & 0,177 & \textbf{0,156} \\
-		          & 126 d & \textbf{0,185} & 0,152 & 16,8 & 77,2 & 0,236 & 0,236 & 0,193 \\ \hline
-		Teste     & 21 d  & 0,147 & 0,112 & 10,6 & 58,3 & \textbf{0,120} & \textbf{0,119} & 0,130 \\
-		          & 63 d  & \textbf{0,213} & 0,150 & 13,9 & 71,5 & 0,233 & 0,233 & 0,227 \\
-		          & 126 d & \textbf{0,267} & 0,192 & 16,9 & 79,1 & 0,321 & 0,321 & 0,309 \\ \hline
+		Validação & 21 d  & 0,096 & 0,067 & 7,0  & 56,7 & 0,091 & \textbf{0,090} & 0,107 \\
+		          & 63 d  & 0,166 & 0,145 & 15,3 & 74,5 & 0,177 & 0,177 & \textbf{0,156} \\
+		          & 126 d & \textbf{0,128} & 0,104 & 10,8 & 91,7 & 0,236 & 0,236 & 0,193 \\ \hline
+		Teste     & 21 d  & \textbf{0,117} & 0,085 & 8,3  & 63,8 & 0,120 & 0,119 & 0,130 \\
+		          & 63 d  & \textbf{0,206} & 0,158 & 14,7 & 75,8 & 0,233 & 0,233 & 0,227 \\
+		          & 126 d & \textbf{0,301} & 0,212 & 18,4 & 77,0 & 0,321 & 0,321 & 0,309 \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
 
-Três padrões emergem. Primeiro, no horizonte de 21 dias a LSTM perde para o passeio aleatório e para o ARIMA nos dois conjuntos: no curto prazo, a melhor previsão do log-retorno é zero, e qualquer modelo que tente prever direção paga em variância. Segundo, o ARIMA é indistinguível do passeio aleatório em todos os horizontes, com RMSE igual até a terceira casa decimal e acerto direcional próximo de 50 \%, o que confirma que a série diária de log-preço é quase integrada e que o passeio aleatório é a referência estatística adequada. Terceiro, a vantagem da LSTM cresce com o horizonte: em 126 dias ela vence todas as referências nos dois conjuntos, com acerto direcional de 77 \% na validação e 79 \% no teste.
+Três padrões emergem. Primeiro, no horizonte de 21 dias a rede perde para o passeio aleatório e para o ARIMA na validação e empata com eles no teste: a diferença de 0,003 no teste é cinco vezes menor que o desvio entre sementes. No curto prazo, a melhor previsão do log-retorno é próxima de zero, e um modelo que tenta prever direção paga em variância. Segundo, o ARIMA é indistinguível do passeio aleatório em todos os horizontes, com RMSE igual até a terceira casa decimal e acerto direcional próximo de 50 \%, o que confirma que a série diária de log-preço é quase integrada e que o passeio aleatório é a referência estatística adequada. Terceiro, a vantagem da rede cresce com o horizonte: em 126 dias ela vence todas as referências nos dois conjuntos, com acerto direcional de 92 \% na validação e 77 \% no teste, contra 75 \% e 61 \% da curva de futuros.
 
-A curva de futuros ajustada pela base sazonal é a referência mais exigente. Na validação ela supera a LSTM em 21 e 63 dias e empata em 126. No teste, período de volatilidade recorde, a curva perde poder preditivo (acerto direcional de 42 a 61 \%) e a LSTM passa a vencê-la em 63 e 126 dias. Em termos de erro absoluto, todas as abordagens pioram do conjunto de validação para o de teste, reflexo do regime de preços sem precedente no período.
+A curva de futuros ajustada pela base sazonal é a referência mais exigente. Na validação ela supera a rede em 63 dias, por 0,010 com a semente 42 e por 0,025 na média de cinco sementes, diferença essa última maior que o desvio entre sementes e, portanto, robusta. Nos outros dois horizontes da validação a rede vence a curva. No teste, período de volatilidade recorde, a curva perde poder preditivo, com acerto direcional de 42 a 61 \%, e a rede passa a vencê-la nos três horizontes. Em termos de erro absoluto, todas as abordagens pioram do conjunto de validação para o de teste nos horizontes de 63 e 126 dias, reflexo do regime de preços sem precedente no período.
 
-A \autoref{fig:previsto-realizado} mostra o previsto contra o realizado por horizonte no conjunto de teste e evidencia a principal deficiência do modelo: a compressão das previsões em direção a zero. As previsões raramente ultrapassam $\pm 0{,}2$ em log-retorno, enquanto os retornos realizados de 126 dias chegaram a $+0{,}57$ na alta do segundo semestre de 2024. A rede acerta a direção, mas subestima a magnitude dos movimentos extremos.
+A \autoref{fig:previsto-realizado} mostra, para cada dia do conjunto de teste, o preço previsto com origem naquele dia contra o preço realizado no horizonte, por horizonte. A leitura exige um cuidado: cada ponto da curva prevista é uma previsão independente, feita com a janela encerrada no dia de origem, e o preço previsto é o preço de origem multiplicado por um fator próximo de um. Por isso, no horizonte de 21 dias, a curva prevista parece acompanhar a realizada: ela é, em grande parte, a série de preços deslocada 21 dias úteis, e a semelhança visual não é evidência de acurácia, mas a mesma defasagem que faz o passeio aleatório ser difícil de bater. É no horizonte de 126 dias que a figura informa: a rede acerta o nível do platô de 2025 e as quedas do fim do período, mas não previu a alta do segundo semestre de 2024, quando os retornos realizados chegaram a $+0{,}57$ em log-retorno enquanto a previsão com origem no início da alta era próxima de zero ou negativa. A rede acerta a direção na maioria dos dias, mas subestima a magnitude dos movimentos extremos.
 
 \begin{figure}[htb]
 	\centering
-	\caption{Log-retorno previsto contra realizado por horizonte no conjunto de teste.}\label{fig:previsto-realizado}
+	\caption{Preço previsto contra preço realizado por horizonte no conjunto de teste; cada ponto da curva prevista é uma previsão independente com origem 21, 63 ou 126 dias úteis antes.}\label{fig:previsto-realizado}
 	\includegraphics[width=\textwidth]{imgs/03_previsto_realizado_teste.png}
 	\fonte{Do autor (2026).}
 \end{figure}
 
 \subsection{Variabilidade entre inicializações}
 
-Antes de interpretar diferenças entre modelos é preciso conhecer a variabilidade do próprio treino. O modelo completo foi treinado com cinco sementes distintas; a \autoref{tab:rq1-seeds} resume o resultado na validação.
+Antes de interpretar diferenças entre modelos é preciso conhecer a variabilidade do próprio treino. O modelo final foi treinado com cinco sementes distintas; a \autoref{tab:rq1-seeds} resume o resultado na validação.
 
 \begin{table}[htb]
 	\centering
-	\caption{Variabilidade do modelo completo entre cinco sementes (validação).}\label{tab:rq1-seeds}
+	\caption{Variabilidade do modelo final entre cinco sementes (validação).}\label{tab:rq1-seeds}
 	\begin{tabular}{l r r r}
 		\hline
 		\textbf{Métrica} & \textbf{Média} & \textbf{Desvio} & \textbf{Semente 42 (modelo final)} \\ \hline
-		RMSE 21 d  & 0,114 & 0,008 & 0,112 \\
-		RMSE 63 d  & 0,188 & 0,017 & 0,194 \\
-		RMSE 126 d & 0,192 & 0,024 & 0,185 \\
-		Direção 21 d (\%)  & 56,9 & 4,0 & 55,6 \\
-		Direção 63 d (\%)  & 61,5 & 6,3 & 60,8 \\
-		Direção 126 d (\%) & 74,1 & 8,2 & 77,2 \\ \hline
+		RMSE 21 d  & 0,105 & 0,014 & 0,096 \\
+		RMSE 63 d  & 0,181 & 0,014 & 0,166 \\
+		RMSE 126 d & 0,155 & 0,030 & 0,128 \\
+		Direção 21 d (\%)  & 51,5 & 9,2  & 56,7 \\
+		Direção 63 d (\%)  & 60,8 & 10,4 & 74,5 \\
+		Direção 126 d (\%) & 83,1 & 7,5  & 91,7 \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
 
-O modelo final está dentro de um desvio-padrão da média em todas as métricas: não é o melhor nem o pior sorteio. A vantagem da curva de futuros sobre a LSTM na validação, de 0,008 em 21 dias e 0,032 em 63 dias, é da ordem de um desvio no primeiro caso e de quase dois no segundo. A diferença em 63 dias é, portanto, robusta à inicialização; a de 21 dias, não.
+A semente 42 está cerca de um desvio-padrão abaixo da média de RMSE em todos os horizontes e acima dela em acerto direcional: é uma semente favorável, não um sorteio típico. As conclusões sobre a ordem entre a rede e as referências, portanto, usam a média das cinco sementes como critério, e as métricas da semente 42 descrevem o modelo efetivamente implantado. Com esse critério, na validação a rede vence o passeio aleatório em 126 dias (0,155 contra 0,236) e em 63 dias (0,181 contra 0,177 é empate), perde para ele em 21 dias, e perde para a curva em 63 dias; no teste, a média das cinco sementes vence as duas referências em 63 e 126 dias e empata em 21.
 
-\subsection{Estudo de ablação}
+\subsection{Importância das variáveis e ablação}
 
-Cada um dos seis grupos de variáveis foi removido por vez, e a rede foi retreinada com três sementes por configuração. A \autoref{tab:rq1-ablacao} apresenta a variação relativa do RMSE médio em relação ao modelo completo; valores positivos indicam que remover o grupo piorou o erro.
+A \autoref{fig:importancia} apresenta a importância por permutação no modelo final: o aumento do RMSE de validação, em média dos três horizontes, quando os valores de cada variável são embaralhados dentro da janela de entrada. Oito variáveis respondem por quase toda a dependência da rede: o indicador de bienalidade e a base físico-futuro (aumento de 33 \% e 32 \% no RMSE médio), a relação de troca da ureia (29 \%), a codificação do mês (19 \% e 10 \% para as duas componentes), o retorno anual da ureia (16 \%), a razão à média de dois anos (14 \%) e o acumulado de chuva de 30 dias (12 \%). No extremo oposto, embaralhar os retornos diários, a volatilidade, o \textit{spread} arábica-robusta, a posição dos fundos, a meta Selic e a temperatura mínima altera o RMSE em menos de 1 \%, e o indicador de geada, constante, em zero. O resultado converge com a correlação de Spearman da \autoref{sec3:eda}: o sinal que a rede usa está em oferta, base, calendário e insumos, e as variáveis de curto prazo são ruído.
+
+\begin{figure}[htb]
+	\centering
+	\caption{Importância por permutação no modelo final: aumento relativo do RMSE de validação, média dos três horizontes e de três permutações, ao embaralhar cada variável.}\label{fig:importancia}
+	\includegraphics[width=0.9\textwidth]{imgs/12_importancia_permutacao.png}
+	\fonte{Do autor (2026).}
+\end{figure}
+
+A ablação mede o que se perde quando um grupo inteiro de variáveis não está disponível e a rede é retreinada sem ele. Cada um dos seis grupos foi removido por vez, com três sementes por configuração. A \autoref{tab:rq1-ablacao} apresenta a variação relativa do RMSE médio em relação ao modelo completo; valores positivos indicam que remover o grupo piorou o erro.
 
 \begin{table}[htb]
 	\centering
@@ -74,25 +137,27 @@ Cada um dos seis grupos de variáveis foi removido por vez, e a rede foi retrein
 	\begin{tabular}{l r r r r}
 		\hline
 		\textbf{Grupo removido} & \textbf{$\Delta$ 21 d} & \textbf{$\Delta$ 63 d} & \textbf{$\Delta$ 126 d} & \textbf{Dir. 126 d} \\ \hline
-		Nenhum (completo)          & ---     & ---    & ---     & 71,3 \% \\
-		(a) Retornos e médias móveis & $-$10,1 \% & $-$6,9 \% & $-$10,0 \% & 77,4 \% \\
-		(b) Mercado (vol., spread, base) & $-$6,7 \% & $-$8,3 \% & $+$10,4 \% & 59,5 \% \\
-		(c) Calendário e Selic     & $+$3,9 \%  & $-$3,1 \% & $+$11,7 \% & 66,8 \% \\
-		(d) Clima                  & $+$3,5 \%  & $+$6,1 \% & $-$9,4 \%  & 73,2 \% \\
-		(e) Fundos (COT)           & $+$1,4 \%  & $-$6,5 \% & $-$12,4 \% & 75,8 \% \\
-		(f) Insumos                & $+$7,2 \%  & $-$7,0 \% & $-$11,4 \% & 83,9 \% \\ \hline
+		Nenhum (completo)          & ---     & ---    & ---     & 81,5 \% \\
+		(a) Retornos e médias móveis & $-$5,6 \% & $+$3,7 \% & $+$22,2 \% & 71,7 \% \\
+		(b) Mercado (vol., spread, base) & $+$0,8 \% & $+$6,2 \% & $+$25,7 \% & 65,2 \% \\
+		(c) Calendário e Selic     & $-$4,2 \% & $+$7,2 \% & $+$37,9 \% & 61,5 \% \\
+		(d) Clima                  & $-$2,5 \% & $+$3,0 \% & $+$13,5 \% & 77,0 \% \\
+		(e) Fundos (COT)           & $-$0,6 \% & $+$2,2 \% & $+$5,2 \%  & 73,8 \% \\
+		(f) Insumos                & $+$0,9 \% & $+$0,1 \% & $-$7,3 \%  & 83,2 \% \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
 
-O desvio entre sementes dentro de cada configuração é de 2 a 5 \% do RMSE em 21 e 63 dias e de cerca de 11 \% em 126 dias, de modo que apenas efeitos acima dessa ordem merecem interpretação. Com esse critério, a ablação sustenta quatro conclusões.
+O desvio entre sementes dentro de cada configuração é grande no modelo enxuto: 18 \% do RMSE em 21 dias, 7 \% em 63 e 23 \% em 126 para o modelo completo. Só efeitos maiores que essa ordem merecem interpretação, e com esse critério a ablação sustenta quatro conclusões.
 
 \begin{alineas}
-	\item Os grupos de \textbf{mercado} e de \textbf{calendário e Selic} são os que carregam sinal de longo prazo: removê-los piora o RMSE de 126 dias em 10 a 12 \% e derruba o acerto direcional nesse horizonte de 71 \% para 59 \% e 67 \%.
-	\item O \textbf{clima} contribui nos horizontes de 21 e 63 dias, com piora de 3 a 6 \% ao ser removido, mas não em 126 dias.
-	\item Remover \textbf{retornos e médias móveis}, \textbf{fundos} ou \textbf{insumos} melhora o erro de 126 dias em 10 a 12 \%. Esses grupos, no modelo completo, adicionam mais ruído que informação no horizonte longo.
-	\item A ablação não sustenta a hipótese de que todas as variáveis exógenas contribuem para a acurácia. Sustenta que um subconjunto (mercado, calendário, Selic e clima) é essencial e que uma versão enxuta do modelo é candidata natural para reduzir o sobreajuste discutido no \autoref{sec:discussao}.
+	\item No horizonte de 126 dias, três grupos são essenciais: \textbf{calendário e Selic}, \textbf{mercado} e \textbf{retornos e médias móveis}. Removê-los piora o RMSE em 38 \%, 26 \% e 22 \% e derruba o acerto direcional de 81 \% para 62 \%, 65 \% e 72 \%. A importância por permutação indica que, dentro do grupo de calendário e Selic, o sinal está na bienalidade e no mês, e não na Selic, cuja permutação não altera o erro.
+	\item \textbf{Clima} e \textbf{fundos} têm contribuição marginal em 126 dias, de 14 \% e 5 \%, dentro ou perto do ruído entre sementes. No caso do clima, parte do sinal é compensada pelo calendário, que mede a mesma estação do ano, como a colinearidade da \autoref{sec3:eda} antecipava.
+	\item O grupo de \textbf{insumos} é o único cuja remoção melhora o erro de 126 dias, em 7 \%. Nesta configuração e com estes hiperparâmetros, o grupo não contribuiu para a previsão de seis meses, embora a relação de troca da ureia esteja entre as variáveis de maior importância por permutação no modelo completo: a rede depende dela quando a tem, mas não precisa dela. O resultado não deve ser generalizado para outras configurações.
+	\item No horizonte de 21 dias nenhum grupo ajuda: remover qualquer um deles muda o RMSE em menos de 6 \%, para melhor ou para pior, dentro do ruído. É mais uma evidência de que a rede não extrai sinal de curto prazo de nenhuma das entradas.
 \end{alineas}
+
+Em síntese, cinco dos seis grupos contribuem para a acurácia no horizonte de seis meses, com calendário, mercado e retornos como essenciais, e nenhum contribui no horizonte de um mês.
 
 \section{Resultados para a RQ2: ganho financeiro da prescrição}\label{sec2:res-rq2}
 
@@ -108,9 +173,9 @@ A \autoref{tab:rq2-teste} apresenta a receita líquida média por saca, em valor
 	\begin{tabular}{l r r r r r r r r}
 		\hline
 		\textbf{Safra} & \textbf{n} & \textbf{Imed.} & \textbf{Parc.} & \textbf{M. móvel} & \textbf{Meta COE} & \textbf{Hedge} & \textbf{AgroVis.} & \textbf{Oráculo} \\ \hline
-		2024/25 & 12 & 1\,999 & \textbf{2\,057} & 1\,996 & 1\,999 & 1\,805 & 2\,003 & 2\,418 \\
-		2025/26 & 8  & 2\,072 & 1\,919 & 1\,963 & 2\,072 & 2\,076 & \textbf{2\,199} & 2\,202 \\
-		Total   & 20 & 2\,028 & 2\,001 & 1\,983 & 2\,028 & 1\,913 & \textbf{2\,081} & 2\,331 \\ \hline
+		2024/25 & 12 & 1\,999 & 2\,057 & 1\,996 & 1\,999 & 1\,805 & \textbf{2\,176} & 2\,418 \\
+		2025/26 & 8  & 2\,072 & 1\,919 & 1\,963 & 2\,072 & 2\,076 & \textbf{2\,202} & 2\,202 \\
+		Total   & 20 & 2\,028 & 2\,001 & 1\,982 & 2\,028 & 1\,914 & \textbf{2\,186} & 2\,332 \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
@@ -122,17 +187,17 @@ A \autoref{tab:rq2-teste} apresenta a receita líquida média por saca, em valor
 	\fonte{Do autor (2026).}
 \end{figure}
 
-No agregado das 20 datas, o AgroVisible obteve 2\,081 R\$/sc contra 2\,028 da venda imediata, ganho de 2,6 \%, e contra 2\,001 da venda parcelada, ganho de 4,0 \%. As duas safras, porém, contam histórias opostas.
+No agregado das 20 datas, o AgroVisible obteve 2\,186 R\$/sc contra 2\,028 da venda imediata, ganho de 7,8 \%, e contra 2\,001 da venda parcelada, ganho de 9,2 \%. Foi a melhor estratégia não oracular nas duas safras.
 
-Na safra 2024/25 o café subiu de 1\,362 R\$/sc em julho de 2024 para mais de 2\,500 em janeiro de 2025, uma alta de 84 \% em seis meses. A estratégia vencedora foi a venda parcelada, que diluiu a venda ao longo da alta sem precisar prevê-la. O AgroVisible armazenou em julho e agosto de 2024, mas vendeu após um ou dois meses com ganhos de 4 \% e 1 \%, e vendeu imediatamente de setembro a dezembro porque a previsão de 21 dias era negativa em todas essas datas, enquanto o retorno realizado de 126 dias foi superior a 50 \%. O modelo não enxergou a alta persistente, e a compressão das previsões para zero fez o motor abandonar o estoque cedo. O resultado ficou praticamente igual ao da venda imediata.
+Na safra 2024/25 o café subiu de 1\,362 R\$/sc em julho de 2024 para mais de 2\,500 em janeiro de 2025, uma alta de 84 \% em seis meses. Nas decisões de 30 de julho, 28 de agosto, 26 de setembro e 25 de outubro de 2024 o motor armazenou por quatro, três, dois e um meses, respectivamente, e vendeu entre 1\,986 e 2\,054 R\$/sc, ganhos de 34 a 40 \% sobre a venda imediata em cada data. Em nenhuma delas a previsão de 126 dias apontava a magnitude da alta: ela era próxima de zero ou negativa, enquanto o retorno realizado de 126 dias passou de $+0{,}5$. O que o motor usou foi a previsão positiva de 21 dias, renovada mês a mês pela política rolante, até que, em novembro, ela ficou negativa e o estoque foi vendido no platô. A única data em que a alta foi perdida é a primeira, 1º de julho de 2024: com previsão de 21 dias negativa, o motor vendeu a 1\,362 R\$/sc, e essa é a única das doze datas da safra em que a venda parcelada superou o AgroVisible. De dezembro de 2024 a maio de 2025, no platô alto, o motor vendeu de imediato em todas as datas, o que era ótimo ou quase ótimo. O único erro absoluto do teste está em 4 de junho de 2025: o motor armazenou três meses em uma queda e perdeu 1,9 \%.
 
-Na safra 2025/26 ocorreu o oposto. Em julho e agosto de 2025, com o preço em torno de 1\,750 R\$/sc após uma queda de 30 \%, a rede previu recuperação, o motor armazenou por dois meses e um mês, respectivamente, e a receita foi 29 \% e 28 \% superior à venda imediata, capturando 100 \% do ganho do oráculo nessas datas. No platô alto que se seguiu, vender imediatamente era ótimo e foi o que o motor fez. A safra fechou em 2\,199 R\$/sc contra 2\,072 da venda imediata, a três reais do oráculo.
+Na safra 2025/26, em julho e agosto de 2025, com o preço em torno de 1\,750 R\$/sc após uma queda de 30 \%, a rede previu recuperação, o motor armazenou por dois meses e um mês, e a receita foi 29 \% e 28 \% superior à venda imediata, capturando todo o ganho do oráculo nessas datas. No platô que se seguiu, vender imediatamente era ótimo e foi o que o motor fez, exceto em outubro de 2025, quando armazenou um mês e ganhou 1 \%. A safra fechou em 2\,202 R\$/sc, igual ao oráculo.
 
-O \textit{hedge} de seis meses foi a pior estratégia no teste, com perda de 5,7 \% contra a venda imediata, porque o mercado esteve em \textit{backwardation} durante quase todo o período: vender o futuro travava um preço abaixo do físico. A meta de margem sobre o COE coincidiu com a venda imediata em todas as datas, pois o preço nunca esteve abaixo de 1,3 vez o COE. O motor nunca escolheu a ação de \textit{hedge} no \textit{backtest}, e a receita do AgroVisible com e sem essa ação é idêntica no teste.
+O \textit{hedge} de seis meses foi a pior estratégia no teste, com perda de 5,7 \% contra a venda imediata, porque o mercado esteve em \textit{backwardation} durante quase todo o período: vender o futuro travava um preço abaixo do físico. A meta de margem sobre o COE coincidiu com a venda imediata em todas as datas, pois o preço nunca esteve abaixo de 1,3 vez o COE. O motor nunca escolheu a ação de \textit{hedge} no \textit{backtest}, e a receita do AgroVisible com e sem essa ação é idêntica no teste. Em resumo, o ganho do teste vem de oito decisões de armazenar em vinte, sete delas corretas.
 
 \subsection{Ampliação da amostra ao período de validação}
 
-Vinte decisões em duas safras de alta histórica constituem uma amostra pequena e atípica. O mesmo protocolo foi aplicado às 18 datas de decisão do período de validação, de julho de 2022 a dezembro de 2023, que inclui uma queda de 40 \% no preço. Nessas duas safras a dispersão residual e a parada antecipada da rede foram calibradas com os próprios dados, o que introduz um viés favorável leve à LSTM; as estatísticas de base já eram estimadas apenas no treino. A \autoref{tab:rq2-4safras} apresenta o resultado por safra e o consolidado de 38 datas.
+Vinte decisões em duas safras de alta histórica constituem uma amostra pequena e atípica. O mesmo protocolo foi aplicado às 18 datas de decisão do período de validação, de julho de 2022 a dezembro de 2023, que inclui uma queda de 40 \% no preço. Nessas duas safras a dispersão residual e a parada antecipada da rede foram calibradas com os próprios dados, o que introduz um viés favorável leve à rede; as estatísticas de base já eram estimadas apenas no treino. A \autoref{tab:rq2-4safras} apresenta o resultado por safra e o consolidado de 38 datas.
 
 \begin{table}[htb]
 	\centering
@@ -142,20 +207,20 @@ Vinte decisões em duas safras de alta histórica constituem uma amostra pequena
 	\begin{tabular}{l r r r r r r r r}
 		\hline
 		\textbf{Safra} & \textbf{n} & \textbf{Imed.} & \textbf{Parc.} & \textbf{M. móvel} & \textbf{Meta COE} & \textbf{Hedge} & \textbf{AgroVis.} & \textbf{Oráculo} \\ \hline
-		2022/23 & 12 & \textbf{1\,139} & 992 & 1\,101 & \textbf{1\,139} & 1\,051 & 1\,106 & 1\,160 \\
-		2023/24 & 6  & 853 & 919 & 859 & 922 & 758 & \textbf{958} & 1\,026 \\
-		2024/25 & 12 & 1\,999 & \textbf{2\,057} & 1\,996 & 1\,999 & 1\,805 & 2\,003 & 2\,418 \\
-		2025/26 & 8  & 2\,072 & 1\,919 & 1\,963 & 2\,072 & 2\,076 & \textbf{2\,199} & 2\,202 \\ \hline
-		Total   & 38 & 1\,562 & 1\,512 & 1\,527 & 1\,573 & 1\,459 & \textbf{1\,596} & 1\,755 \\
-		Ganho s/ imediata & & --- & $-$1,6\,\% & $-$1,7\,\% & $+$1,3\,\% & $-$7,7\,\% & $+$2,7\,\% & $+$14,0\,\% \\
-		Captura oráculo & & 90,0\,\% & 86,5\,\% & 87,9\,\% & 91,1\,\% & 83,3\,\% & 91,9\,\% & 100\,\% \\ \hline
+		2022/23 & 12 & \textbf{1\,139} & 992 & 1\,101 & \textbf{1\,139} & 1\,051 & 1\,102 & 1\,160 \\
+		2023/24 & 6  & 853 & 919 & 859 & 922 & 758 & \textbf{944} & 1\,026 \\
+		2024/25 & 12 & 1\,999 & 2\,057 & 1\,996 & 1\,999 & 1\,805 & \textbf{2\,176} & 2\,418 \\
+		2025/26 & 8  & 2\,072 & 1\,919 & 1\,963 & 2\,072 & 2\,076 & \textbf{2\,202} & 2\,202 \\ \hline
+		Total   & 38 & 1\,562 & 1\,512 & 1\,527 & 1\,573 & 1\,459 & \textbf{1\,648} & 1\,755 \\
+		Ganho s/ imediata & & --- & $-$1,6\,\% & $-$1,7\,\% & $+$1,3\,\% & $-$7,7\,\% & $+$6,1\,\% & $+$14,0\,\% \\
+		Captura oráculo & & 90,0\,\% & 86,5\,\% & 87,9\,\% & 91,1\,\% & 83,3\,\% & 94,0\,\% & 100\,\% \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
 
-Na safra 2022/23, de queda, o AgroVisible perdeu 3 \% para a venda imediata. Duas decisões em maio e junho de 2023 explicam quase toda a perda: a rede previu alta, o motor armazenou até o fim do horizonte e o preço caiu 20 \%, com perdas de 25 \% e 28 \% nessas datas. Na safra 2023/24, de recuperação a partir de um fundo, o motor armazenou em todas as datas e venceu todas as heurísticas, com ganho de 12 \% sobre a venda imediata.
+Na safra 2022/23, de queda, o AgroVisible perdeu 3,2 \% para a venda imediata. Três decisões explicam a perda. Em 29 de setembro de 2022 a rede previu alta de 21 dias, o motor armazenou dois meses e o preço caiu 26 \%, a maior perda das 38 datas. Em 5 de junho de 2023 o motor armazenou até o fim do horizonte em uma queda e perdeu 11 \%, e em 31 de outubro de 2022 perdeu 3 \%. Na safra 2023/24, de recuperação a partir de um fundo, o motor armazenou em todas as seis datas e venceu todas as heurísticas, com ganho de 10,7 \% sobre a venda imediata.
 
-No consolidado de quatro safras e dois regimes, o AgroVisible foi a única estratégia a superar a venda imediata em todos os agregados, com ganho de 2,7 \% e captura de 91,9 \% do valor do oráculo. A venda parcelada, que venceu na safra de alta, perdeu 1,6 \% no consolidado, porque carrega estoque durante as quedas. A \autoref{tab:rq2-oraculo} mostra a fração do ganho disponível capturada por cada estratégia nas datas em que o oráculo superava a venda imediata em mais de 1 \%, isto é, nas datas em que havia algo a ganhar armazenando.
+No consolidado de quatro safras e dois regimes, o AgroVisible foi a melhor estratégia não oracular em três das quatro safras e no total, com ganho de 6,1 \% sobre a venda imediata e captura de 94,0 \% do valor do oráculo; a única safra em que ficou atrás foi a de queda contínua, em que vender de imediato era a melhor política e a meta de margem, que nela coincide com a venda imediata, empata com ela. A venda parcelada, que foi a segunda melhor na safra de alta, perdeu 1,6 \% no consolidado, porque carrega estoque durante as quedas. A \autoref{tab:rq2-oraculo} mostra a fração do ganho disponível capturada por cada estratégia nas datas em que o oráculo superava a venda imediata em mais de 1 \%, isto é, nas datas em que havia algo a ganhar armazenando.
 
 \begin{table}[htb]
 	\centering
@@ -167,7 +232,7 @@ No consolidado de quatro safras e dois regimes, o AgroVisible foi a única estra
 		Média móvel 3 m & 18,2 \% & 28,3 \% \\
 		Meta de margem COE & 0,0 \% & 15,1 \% \\
 		Hedge 6 m & 51,7 \% & $-$22,7 \% \\
-		AgroVisible & 19,0 \% & \textbf{47,4 \%} \\ \hline
+		AgroVisible & 49,0 \% & \textbf{47,3 \%} \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
@@ -184,15 +249,15 @@ A \autoref{tab:rq2-estatistica} apresenta a diferença pareada por data entre o 
 	\begin{tabular}{l r l r r r r}
 		\hline
 		\textbf{Amostra} & \textbf{n} & \textbf{Comparação} & \textbf{Média} & \textbf{IC 95 \%} & \textbf{p (Wilcoxon)} & \textbf{Datas positivas} \\ \hline
-		Teste & 20 & vs. imediata  & 52,8 & [$-$0,1; 128,6] & 0,271 & 20 \% \\
-		Teste & 20 & vs. parcelada & 79,8 & [$-$76,0; 221,5] & 0,294 & 65 \% \\
-		Quatro safras & 38 & vs. imediata  & 34,0 & [$-$6,8; 79,9] & 0,066 & 34 \% \\
-		Quatro safras & 38 & vs. parcelada & 84,0 & [$-$3,1; 163,2] & \textbf{0,018} & 71 \% \\ \hline
+		Teste & 20 & vs. imediata  & 157,8 & [52,6; 266,7] & \textbf{0,046} & 35 \% \\
+		Teste & 20 & vs. parcelada & 184,8 & [90,1; 272,9] & \textbf{0,002} & 75 \% \\
+		Quatro safras & 38 & vs. imediata  & 86,0 & [24,2; 155,6] & \textbf{0,021} & 37 \% \\
+		Quatro safras & 38 & vs. parcelada & 136,0 & [78,9; 192,2] & \textbf{$<$ 0,001} & 74 \% \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
 
-No teste isolado nenhuma diferença é significativa ao nível de 5 \%, o que era esperado com 20 observações e desvio-padrão da diferença de 156 R\$/sc. Com as 38 datas, a vantagem sobre a venda parcelada torna-se significativa ($p = 0{,}018$) e a vantagem sobre a venda imediata fica na margem ($p = 0{,}066$), com intervalo de confiança que inclui o zero por pouco. A baixa fração de datas positivas contra a venda imediata (34 \%) decorre da própria estrutura da política: na maioria das datas o motor vende imediatamente e a diferença é zero. O ganho concentra-se em poucas decisões de armazenar com retorno elevado, o que torna a média positiva mas a mediana nula, e é isso que o teste de Wilcoxon penaliza.
+As quatro diferenças são significativas ao nível de 5 \% e os quatro intervalos de confiança excluem o zero. Os intervalos, porém, são largos: no teste, a vantagem sobre a venda imediata pode ser de 53 ou de 267 R\$/sc por saca, porque o desvio-padrão da diferença entre datas é de 250 R\$/sc com apenas 20 observações. A baixa fração de datas positivas contra a venda imediata, 35 \% no teste e 37 \% nas quatro safras, decorre da própria estrutura da política: na maioria das datas o motor vende imediatamente e a diferença é exatamente zero. O ganho concentra-se em poucas decisões de armazenar com retorno elevado, o que torna a média positiva mas a mediana nula, e é isso que o teste de Wilcoxon penaliza; ainda assim, ele rejeita a hipótese de igualdade.
 
 \subsection{Anatomia das decisões}
 
@@ -205,11 +270,37 @@ A \autoref{fig:gatilho} ilustra a saída do motor para a data de 31 de agosto de
 	\fonte{Do autor (2026).}
 \end{figure}
 
-A decomposição por data das 38 decisões mostra que os quatro maiores ganhos (julho e agosto de 2025, julho e outubro de 2023) vieram de previsões de alta de 21 dias corretas em direção, e que as duas maiores perdas (maio e junho de 2023) vieram de previsões de alta erradas em datas de queda forte. Em cinco das 38 datas o motor armazenou e a venda imediata teria sido melhor; em treze, armazenou e ganhou; nas vinte restantes vendeu de imediato. O ganho médio positivo vem, portanto, de uma assimetria: quando o motor acerta a recuperação a partir de um fundo, o ganho é de 10 a 30 \%; quando erra, a perda média é menor, porque a política rolante revende o estoque assim que a previsão do mês seguinte deixa de justificar o carregamento.
+A decomposição por data das 38 decisões mostra que os maiores ganhos vieram das quatro datas de julho a outubro de 2024 (34 a 40 \%) e de julho e agosto de 2025 (29 e 28 \%), todas com previsão de alta de 21 dias correta em direção, e que as maiores perdas (setembro de 2022, $-$26 \%; junho de 2023, $-$11 \%) vieram de previsões de alta em quedas persistentes. Em 18 das 38 datas o motor armazenou: em 14 ganhou e em 4 perdeu; nas 20 restantes vendeu de imediato. O ganho médio positivo vem, portanto, de uma assimetria: quando o motor acerta a recuperação a partir de um fundo, ou a continuidade de uma alta mês a mês, o ganho é de 10 a 40 \%; quando erra, a perda média é menor, porque a política rolante revende o estoque assim que a previsão do mês seguinte deixa de justificar o carregamento. A exceção é a queda persistente de 2022, em que a previsão de alta se repetiu por dois meses e a perda foi da ordem dos ganhos.
+
+\subsection{Simulação por safra}\label{sec2:res-safra}
+
+A \autoref{tab:rq2-safra} apresenta a simulação em que uma única saca, colhida no primeiro dia útil de julho, tem até doze meses para ser vendida sob política rolante, com as mesmas estratégias de referência.
+
+\begin{table}[htb]
+	\centering
+	\caption{Simulação por safra: receita líquida por saca (R\$, valor presente na colheita) de uma saca colhida em 1º de julho com até doze meses para venda; mês em que o AgroVisible vendeu e mês ótimo do oráculo.}\label{tab:rq2-safra}
+	\footnotesize
+	\setlength{\tabcolsep}{3.5pt}
+	\begin{tabular}{l l r r r r r r r r r}
+		\hline
+		\textbf{Safra} & \textbf{Conjunto} & \textbf{Imed.} & \textbf{Parc.} & \textbf{M. móvel} & \textbf{Meta COE} & \textbf{Hedge} & \textbf{AgroVis.} & \textbf{Oráculo} & \textbf{Mês AV} & \textbf{Mês orác.} \\ \hline
+		2022/23 & validação & \textbf{1\,359} & 1\,040 & \textbf{1\,359} & \textbf{1\,359} & 1\,211 & \textbf{1\,359} & 1\,359 & 0 & 0 \\
+		2023/24 & validação & 824 & \textbf{927} & 820 & 884 & 609 & 874 & 1\,205 & 7 & 12 \\
+		2024/25 & teste & 1\,362 & \textbf{1\,839} & 1\,362 & 1\,362 & 1\,124 & 1\,362 & 2\,321 & 0 & 9 \\
+		2025/26 & teste & 1\,807 & 1\,835 & \textbf{2\,251} & 1\,807 & 1\,410 & \textbf{2\,251} & 2\,251 & 2 & 2 \\ \hline
+		Média, duas safras cegas & & 1\,585 & \textbf{1\,837} & 1\,807 & 1\,585 & 1\,267 & 1\,807 & 2\,286 & & \\
+		Média, quatro safras & & 1\,338 & 1\,410 & 1\,448 & 1\,353 & 1\,089 & \textbf{1\,462} & 1\,784 & & \\ \hline
+	\end{tabular}
+	\fonte{Do autor (2026).}
+\end{table}
+
+A simulação conta uma história menos favorável que o \textit{backtest}, e por isso é reportada. Com uma única decisão por safra, o resultado depende da data de entrada. Na safra 2025/26 o motor armazenou dois meses e vendeu no mês ótimo, com ganho de 24,6 \% sobre a venda imediata. Na safra 2023/24 armazenou sete meses em uma recuperação lenta e ganhou 6,0 \%, abaixo da venda parcelada. Na safra 2022/23 vendeu na colheita, que era a melhor decisão. Na safra 2024/25, porém, a previsão de 21 dias no dia 1º de julho de 2024 era negativa, o motor vendeu a saca a 1\,362 R\$/sc e, como a saca já não existia, a política rolante não teve a chance de reavaliá-la nos meses seguintes, quando o \textit{backtest} mensal capturou a alta. O oráculo teria vendido no nono mês a 2\,321 R\$/sc. Nessa safra a venda parcelada, que por construção carrega parte da saca por doze meses, ganhou 35 \%.
+
+Em média, o ganho do AgroVisible sobre a venda imediata foi de 12,3 \% nas duas safras cegas e de 7,6 \% nas quatro, mas a venda parcelada obteve 1\,837 R\$/sc contra 1\,807 do AgroVisible nas safras cegas, e só no consolidado das quatro safras o AgroVisible fica à frente de todas as heurísticas. A diferença para o \textit{backtest} é instrutiva: vinte decisões por safra diluem o efeito de uma data de entrada infeliz; uma decisão por safra o expõe inteiro. A implicação, discutida no \autoref{sec:discussao}, é que o valor do motor está na reavaliação mensal de um estoque ainda existente, e que uma venda total na colheita, recomendada a partir de uma previsão de curto prazo, é a decisão de maior risco da política.
 
 \subsection{O custo operacional efetivo no motor}
 
-O COE real por safra foi obtido da série histórica de custos de produção da CONAB para o café arábica em Guaxupé, Minas Gerais: 766, 714, 784 e 876 R\$/sc para as safras de 2022 a 2025. O valor provisório de 700 R\$/sc estava dentro da faixa. Com esses valores, a margem mínima observada sobre o COE no teste foi de 74 \%, e a restrição de não vender abaixo de COE$\times$(1 + m) não atuou em nenhuma data para m até 30 \%. No período de validação, com preços entre 800 e 1\,200 R\$/sc, a heurística de meta de margem passou a diferir da venda imediata em 7 das 18 datas e obteve 1\,062 contra 1\,043 R\$/sc. A restrição foi mantida como parâmetro opcional, desligada por padrão: ela só altera a decisão quando o preço está abaixo do piso, e nesse caso força o produtor a carregar o café justamente quando o modelo prevê queda, o que configura regra de sobrevivência financeira e não política de comercialização. A sinalização de margem e a classificação do resultado esperado nas faixas de lucro do módulo de custos, por sua vez, acompanham toda recomendação.
+O COE real por safra foi obtido da série histórica de custos de produção da CONAB para o café arábica em Guaxupé, Minas Gerais: 766, 714, 784 e 876 R\$/sc para as safras de 2022 a 2025. O valor provisório de 700 R\$/sc estava dentro da faixa. Com esses valores, a margem mínima observada sobre o COE no teste foi de 74 \%, e a restrição de não vender abaixo de COE$\times$(1 + m) não atuou em nenhuma data para m até 30 \%. No período de validação, com preços entre 800 e 1\,360 R\$/sc, a heurística de meta de margem passou a diferir da venda imediata em 7 das 18 datas e obteve 1\,062 contra 1\,043 R\$/sc. A restrição foi mantida como parâmetro opcional, desligada por padrão: ela só altera a decisão quando o preço está abaixo do piso, e nesse caso força o produtor a carregar o café justamente quando o modelo prevê queda, o que configura regra de sobrevivência financeira e não política de comercialização. A sinalização de margem e a classificação do resultado esperado nas faixas de lucro do módulo de custos, por sua vez, acompanham toda recomendação.
 
 \section{Resultados para a RQ3: robustez da política}\label{sec2:res-rq3}
 
@@ -223,18 +314,19 @@ A \autoref{tab:rq3} consolida a sensibilidade da política aos parâmetros econ�
 	\begin{tabular}{l l r r r}
 		\hline
 		\textbf{Parâmetro} & \textbf{Valor} & \textbf{Receita} & \textbf{Freq. armazenar} & \textbf{Ações alteradas} \\ \hline
-		Taxa de desconto & 8 \% a.a.   & 2\,083 & 25 \% & 0 \\
-		                 & 10 \% (base) & 2\,081 & 25 \% & --- \\
-		                 & 12 \%       & 2\,080 & 25 \% & 0 \\
-		                 & 15 \%       & 2\,078 & 25 \% & 0 \\
-		                 & Selic vigente por data & 2\,079 & 25 \% & 0 \\ \hline
-		Armazenagem      & 1,50 R\$/sc/mês & 2\,082 & 25 \% & 0 \\
-		                 & 5,00 R\$/sc/mês & 2\,080 & 25 \% & 0 \\ \hline
-		Base esperada    & $-$5 pp / $+$5 pp & 2\,081 & 25 \% & 0 \\
-		Risco de base    & $\times 2$   & 2\,081 & 25 \% & 0 \\ \hline
-		Aversão a risco $\lambda$ & 0,25 & 2\,080 & 15 \% & 2 \\
-		                 & 0,50 & 2\,079 & 10 \% & 3 \\
-		                 & 1,00 & 2\,029 & 5 \%  & 4 \\ \hline
+		Taxa de desconto & 8 \% a.a.   & 2\,189 & 40 \% & 0 \\
+		                 & 10 \% (base) & 2\,186 & 40 \% & --- \\
+		                 & 12 \%       & 2\,184 & 40 \% & 0 \\
+		                 & 13,25 \%    & 2\,182 & 40 \% & 0 \\
+		                 & 15 \%       & 2\,180 & 40 \% & 0 \\
+		                 & Selic vigente por data & 2\,183 & 40 \% & 0 \\ \hline
+		Armazenagem      & 1,50 R\$/sc/mês & 2\,187 & 40 \% & 0 \\
+		                 & 5,00 R\$/sc/mês & 2\,184 & 40 \% & 0 \\ \hline
+		Base esperada    & $-$5 pp / $+$5 pp & 2\,186 & 40 \% & 0 \\
+		Risco de base    & $\times 2$   & 2\,186 & 40 \% & 0 \\ \hline
+		Aversão a risco $\lambda$ & 0,25 & 2\,187 & 30 \% & 2 \\
+		                 & 0,50 & 2\,030 & 5 \%  & 7 \\
+		                 & 1,00 & 2\,028 & 0 \%  & 8 \\ \hline
 	\end{tabular}
 	\fonte{Do autor (2026).}
 \end{table}
@@ -246,14 +338,14 @@ A \autoref{tab:rq3} consolida a sensibilidade da política aos parâmetros econ�
 	\fonte{Do autor (2026).}
 \end{figure}
 
-\paragraph{Taxa de desconto.} Entre 8 \% e 15 \% a.a., faixa que cobre toda a variação da Selic no período, a receita do AgroVisible move-se menos de 5 R\$/sc e nenhuma das 20 ações muda. O efeito da taxa é maior sobre a venda parcelada, que perde 31 R\$/sc na mesma faixa porque sempre carrega parte da produção por seis meses. A política é insensível à Selic porque as decisões de armazenar são tomadas quando a deriva prevista é de 10 a 20 \% em poucos meses, ordem de grandeza acima do custo de oportunidade mensal de cerca de 1 \%.
+\paragraph{Taxa de desconto.} Entre 8 \% e 15 \% a.a., faixa que cobre toda a variação da Selic no período, a receita do AgroVisible move-se menos de 10 R\$/sc e nenhuma das 20 ações muda. O efeito da taxa é maior sobre a venda parcelada, que perde 31 R\$/sc na mesma faixa porque sempre carrega parte da produção por seis meses. A política é insensível à Selic porque as decisões de armazenar são tomadas quando a deriva prevista é de 10 a 20 \% em poucos meses, ordem de grandeza acima do custo de oportunidade mensal de cerca de 1 \%.
 
-\paragraph{Armazenagem.} Entre 1,50 e 5,00 R\$/sc/mês a receita varia 2 R\$/sc e nenhuma ação muda. Com o preço da saca acima de 1\,300 R\$, a armazenagem mensal representa de 0,1 a 0,4 \% do valor, inferior ao custo de oportunidade e muito inferior à deriva prevista. Esse resultado também torna irrelevante a incerteza sobre o valor exato da tarifa de armazém, discutida no \autoref{sec:ameacas}.
+\paragraph{Armazenagem.} Entre 1,50 e 5,00 R\$/sc/mês a receita varia 3 R\$/sc e nenhuma ação muda. Com o preço da saca acima de 1\,300 R\$, a armazenagem mensal representa de 0,1 a 0,4 \% do valor, inferior ao custo de oportunidade e muito inferior à deriva prevista. Esse resultado também torna irrelevante a incerteza sobre o valor exato da tarifa de armazém, discutida no \autoref{sec:ameacas}.
 
 \paragraph{Base e risco de base.} Com neutralidade a risco, deslocar a base esperada em 5 pontos percentuais para qualquer lado, ou dobrar o risco de base, não altera nenhuma decisão nem a receita. A razão é que a ação de \textit{hedge}, única afetada por esses parâmetros, nunca é competitiva no \textit{backtest}: com a curva de futuros aproximada pelo primeiro vencimento e o mercado em \textit{backwardation}, travar o preço futuro sempre rendia menos que vender ou armazenar descoberto. A base só passa a influenciar a política na recomendação corrente, em que a curva real por vencimento está disponível: na data de 31 de agosto de 2026, com a base em $-$26 \% contra $-$21 \% sazonal, o \textit{hedge} de um mês trava cerca de 1\,816 R\$/sc contra 1\,748 do físico e torna-se a ação recomendada para $\lambda$ entre 0,25 e 0,5.
 
-\paragraph{Aversão a risco.} O único parâmetro que muda a política é $\lambda$. Até 0,5 a receita média permanece em 2\,079 a 2\,081 R\$/sc, mas a frequência de armazenar cai de 25 \% para 10 \% das datas: o produtor avesso a risco deixa de armazenar nas datas em que a deriva prevista é pequena diante da dispersão, e essas eram as datas de ganho marginal. Em $\lambda = 1$ o motor vende em 19 das 20 datas e a receita colapsa para a da venda imediata. A aversão a risco, portanto, não destrói o ganho da política até valores moderados; ela o concentra em menos decisões, cada uma com maior convicção. O desvio-padrão da receita entre datas, porém, cresce de 392 para 406 R\$/sc de $\lambda = 0$ a $\lambda = 1$, porque a venda imediata em um mercado volátil é, ela própria, a estratégia de maior dispersão entre datas.
+\paragraph{Aversão a risco.} O único parâmetro que muda a política é $\lambda$, e a transição é abrupta. Em $\lambda = 0{,}25$ a receita média permanece em 2\,187 R\$/sc e a frequência de armazenar cai de 40 \% para 30 \% das datas: o produtor moderadamente avesso a risco deixa de armazenar nas duas datas em que a deriva prevista era pequena diante da dispersão, e essas eram justamente as datas de ganho marginal, de modo que a receita não cai. Em $\lambda = 0{,}5$, porém, o motor armazena em uma só das 20 datas e a receita colapsa para 2\,030 R\$/sc, praticamente a da venda imediata; em $\lambda = 1$ vende sempre. A transição é mais abrupta do que seria com um modelo de dispersão residual maior: como o desvio residual do modelo final é pequeno, a penalização $\lambda \cdot \mathrm{DP}$ passa a dominar o valor esperado já em $\lambda = 0{,}5$. A aversão a risco, portanto, preserva o ganho da política até valores leves e o elimina a partir de valores moderados. O desvio-padrão da receita entre datas, por sua vez, cresce de 269 para 406 R\$/sc de $\lambda = 0$ a $\lambda = 1$, porque a venda imediata em um mercado volátil é, ela própria, a estratégia de maior dispersão entre datas.
 
 \section{Custo computacional}\label{sec2:res-custo}
 
-Em CPU, sem aceleração por GPU, o treino do modelo final levou 125 segundos; a resolução do motor de decisão para uma data, com sete camadas e 121 nós de preço, leva 2 milissegundos; o \textit{backtest} completo de 20 datas com política rolante, cerca de 120 resoluções do motor, leva 0,4 segundo. A grade de sensibilidade de 12 \textit{backtests} leva um minuto, e os 23 retreinos da ablação e do estudo de sementes levaram 35 minutos. O custo computacional da ferramenta é, portanto, compatível com execução em um computador pessoal ou em um servidor modesto de cooperativa, e a etapa cara, o treino da rede, precisa ser repetida apenas quando novos dados justificam.
+Em CPU, sem aceleração por GPU, o treino do modelo final levou 74 segundos, e os retreinos com outras sementes entre 45 e 116 segundos; a resolução do motor de decisão para uma data, com sete camadas e 121 nós de preço, leva 2 milissegundos; o \textit{backtest} completo de 20 datas com política rolante, cerca de 120 resoluções do motor, leva meio segundo. A grade de sensibilidade de 12 \textit{backtests} leva um minuto, e os 23 retreinos da ablação e do estudo de sementes levaram 35 minutos. O custo computacional da ferramenta é, portanto, compatível com execução em um computador pessoal ou em um servidor modesto de cooperativa, e a etapa cara, o treino da rede, precisa ser repetida apenas quando novos dados justificam.
