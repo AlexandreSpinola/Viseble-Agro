@@ -1,0 +1,9 @@
+,receita_media_R$/sc,ganho_vs_imediata_%,vence_imediata_%,captura_oraculo_%,desvio_padrao,pior_caso_R$/sc
+venda_imediata,1561.82,0.0,0.0,90.0,590.43,804.04
+venda_parcelada,1511.79,-1.59,44.74,86.46,545.88,835.97
+media_movel_3m,1526.72,-1.72,21.05,87.86,598.1,797.53
+meta_margem_coe,1572.86,1.34,13.16,91.11,576.93,893.38
+hedge_ate_o_fim,1458.54,-7.69,15.79,83.29,607.48,666.79
+lstm_dp_sem_hedge,1647.79,6.12,36.84,94.02,615.15,882.01
+lstm_dp,1647.79,6.12,36.84,94.02,615.15,882.01
+oraculo,1755.3,14.04,57.89,100.0,634.18,902.18

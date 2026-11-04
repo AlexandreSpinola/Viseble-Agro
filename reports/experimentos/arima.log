@@ -1,0 +1,10 @@
+ordem por AIC no treino: (1, 1, 2) AIC -23094.7
+val ok
+test ok
+split horizonte     ordem  rmse_arima  mae_arima  mape_preco_%  acerto_direcao_arima_%  rmse_naive
+  val       21d (1, 1, 2)      0.0904     0.0666        6.8721                 52.1505      0.0907
+  val       63d (1, 1, 2)      0.1766     0.1524       16.1280                 58.3333      0.1767
+  val      126d (1, 1, 2)      0.2356     0.2112       21.3818                 50.2688      0.2356
+ test       21d (1, 1, 2)      0.1193     0.0848        8.3642                 54.9161      0.1197
+ test       63d (1, 1, 2)      0.2329     0.1872       18.1071                 58.5132      0.2332
+ test      126d (1, 1, 2)      0.3211     0.2672       25.4284                 49.1607      0.3211

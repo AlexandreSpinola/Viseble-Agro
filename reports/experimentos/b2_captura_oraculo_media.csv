@@ -1,0 +1,9 @@
+,teste,teste+validação
+venda_imediata,0.0,0.0
+venda_parcelada,-6488.4,-3549.4
+media_movel_3m,16.7,27.0
+meta_margem_coe,0.0,14.4
+hedge_ate_o_fim,-1844.8,-1053.8
+lstm_dp_sem_hedge,44.9,45.2
+lstm_dp,44.9,45.2
+oraculo,100.0,100.0

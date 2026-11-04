@@ -1,0 +1,44 @@
+# Ambiente virtual e segredos
+venv/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Dados e modelos: versionados de propósito (pequenos; CEPEA exige download manual
+# e a reprodutibilidade do TCC depende dos brutos preservados). Só lixo temporário fora:
+data/external/_pinksheet_test.xlsx
+data/interim/*
+!data/interim/.gitkeep
+# despejo do cot-reports (CFTC) na raiz
+annual_*.txt
+
+# LaTeX: auxiliares de compilação (PDF final fica versionado)
+Template-Trabalhos-Academicos-UFLA-main/*.aux
+Template-Trabalhos-Academicos-UFLA-main/*.bbl
+Template-Trabalhos-Academicos-UFLA-main/*.blg
+Template-Trabalhos-Academicos-UFLA-main/*.fdb_latexmk
+Template-Trabalhos-Academicos-UFLA-main/*.fls
+Template-Trabalhos-Academicos-UFLA-main/*.idx
+Template-Trabalhos-Academicos-UFLA-main/*.ilg
+Template-Trabalhos-Academicos-UFLA-main/*.ind
+Template-Trabalhos-Academicos-UFLA-main/*.log
+Template-Trabalhos-Academicos-UFLA-main/*.lof
+Template-Trabalhos-Academicos-UFLA-main/*.loq
+Template-Trabalhos-Academicos-UFLA-main/*.lot
+Template-Trabalhos-Academicos-UFLA-main/*.out
+Template-Trabalhos-Academicos-UFLA-main/*.toc
+Template-Trabalhos-Academicos-UFLA-main/*.synctex.gz
+Template-Trabalhos-Academicos-UFLA-main/mintest.*
+
+# IDE / SO
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Material de curso pago (AgroSafety): nunca versionar
+Agrosafety/

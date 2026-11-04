@@ -1,0 +1,5 @@
+amostra,n,comparacao,media,desvio,ic95_inf,ic95_sup,p_wilcoxon,fracao_datas_positivas_%
+teste,20,lstm_dp − venda_imediata,157.846,250.354,52.64,266.725,0.046,35.0
+teste,20,lstm_dp − venda_parcelada,184.839,215.852,90.135,272.909,0.002,75.0
+teste+validação,38,lstm_dp − venda_imediata,85.971,207.91,24.211,155.641,0.021,36.842
+teste+validação,38,lstm_dp − venda_parcelada,136.001,178.83,78.92,192.201,0.0,73.684

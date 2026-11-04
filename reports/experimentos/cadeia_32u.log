@@ -1,0 +1,107 @@
+== retreinos
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793797323.227548   26900 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+C5 {'seed': 42, 'n_features': 26, 'epocas': 26, 'tempo_s': 74.2, 'rmse_21d': 0.09603060781955719, 'mae_21d': 0.06696149706840515, 'dir_21d': 56.72043010752689, 'rmse_63d': 0.16612999141216278, 'mae_63d': 0.1448577493429184, 'dir_63d': 74.46236559139786, 'rmse_126d': 0.12778259813785553, 'mae_126d': 0.1041896641254425, 'dir_126d': 91.66666666666666, 'config': 'completo'}
+C5 {'seed': 43, 'n_features': 26, 'epocas': 19, 'tempo_s': 53.1, 'rmse_21d': 0.09374316781759262, 'mae_21d': 0.06593748182058334, 'dir_21d': 57.52688172043011, 'rmse_63d': 0.1809028834104538, 'mae_63d': 0.15736334025859833, 'dir_63d': 48.11827956989247, 'rmse_126d': 0.15343958139419556, 'mae_126d': 0.12613293528556824, 'dir_126d': 79.3010752688172, 'config': 'completo'}
+C5 {'seed': 44, 'n_features': 26, 'epocas': 16, 'tempo_s': 45.0, 'rmse_21d': 0.1285621076822281, 'mae_21d': 0.10059996694326401, 'dir_21d': 35.483870967741936, 'rmse_63d': 0.18990951776504517, 'mae_63d': 0.15539009869098663, 'dir_63d': 56.451612903225815, 'rmse_126d': 0.20166391134262085, 'mae_126d': 0.17293700575828552, 'dir_126d': 73.38709677419355, 'config': 'completo'}
+C5 {'seed': 45, 'n_features': 26, 'epocas': 25, 'tempo_s': 68.8, 'rmse_21d': 0.0992063581943512, 'mae_21d': 0.06928902119398117, 'dir_21d': 51.88172043010753, 'rmse_63d': 0.16675381362438202, 'mae_63d': 0.14323781430721283, 'dir_63d': 68.01075268817203, 'rmse_126d': 0.12923084199428558, 'mae_126d': 0.10576743632555008, 'dir_126d': 89.51612903225806, 'config': 'completo'}
+C5 {'seed': 46, 'n_features': 26, 'epocas': 43, 'tempo_s': 115.5, 'rmse_21d': 0.10911179333925247, 'mae_21d': 0.07887841016054153, 'dir_21d': 55.91397849462365, 'rmse_63d': 0.19867397844791412, 'mae_63d': 0.15791277587413788, 'dir_63d': 56.98924731182796, 'rmse_126d': 0.16377201676368713, 'mae_126d': 0.14180967211723328, 'dir_126d': 81.45161290322581, 'config': 'completo'}
+C3 {'seed': 42, 'n_features': 17, 'epocas': 40, 'tempo_s': 120.7, 'rmse_21d': 0.09834633767604828, 'mae_21d': 0.06791480630636215, 'dir_21d': 51.88172043010753, 'rmse_63d': 0.17423908412456512, 'mae_63d': 0.14779089391231537, 'dir_63d': 59.946236559139784, 'rmse_126d': 0.17851680517196655, 'mae_126d': 0.1542252004146576, 'dir_126d': 77.95698924731182, 'config': 'sem_a_retornos_ma'}
+C3 {'seed': 43, 'n_features': 17, 'epocas': 16, 'tempo_s': 46.5, 'rmse_21d': 0.10213059186935425, 'mae_21d': 0.07198942452669144, 'dir_21d': 58.06451612903226, 'rmse_63d': 0.19991379976272583, 'mae_63d': 0.16865845024585724, 'dir_63d': 49.46236559139785, 'rmse_126d': 0.21614885330200195, 'mae_126d': 0.18946880102157593, 'dir_126d': 66.93548387096774, 'config': 'sem_a_retornos_ma'}
+C3 {'seed': 44, 'n_features': 17, 'epocas': 18, 'tempo_s': 50.4, 'rmse_21d': 0.09998960793018341, 'mae_21d': 0.07015538215637207, 'dir_21d': 44.086021505376344, 'rmse_63d': 0.18240390717983246, 'mae_63d': 0.14269688725471497, 'dir_63d': 57.52688172043011, 'rmse_126d': 0.195461705327034, 'mae_126d': 0.1654277741909027, 'dir_126d': 70.16129032258065, 'config': 'sem_a_retornos_ma'}
+C3 {'seed': 42, 'n_features': 23, 'epocas': 16, 'tempo_s': 44.4, 'rmse_21d': 0.10747916996479034, 'mae_21d': 0.08076818287372589, 'dir_21d': 50.0, 'rmse_63d': 0.1925620436668396, 'mae_63d': 0.16353434324264526, 'dir_63d': 48.655913978494624, 'rmse_126d': 0.20420558750629425, 'mae_126d': 0.17255064845085144, 'dir_126d': 59.946236559139784, 'config': 'sem_b_mercado'}
+C3 {'seed': 43, 'n_features': 23, 'epocas': 22, 'tempo_s': 63.8, 'rmse_21d': 0.10325313359498978, 'mae_21d': 0.07723437249660492, 'dir_21d': 52.41935483870967, 'rmse_63d': 0.17851991951465607, 'mae_63d': 0.14617489278316498, 'dir_63d': 63.97849462365591, 'rmse_126d': 0.19279365241527557, 'mae_126d': 0.1702270358800888, 'dir_126d': 70.43010752688173, 'config': 'sem_b_mercado'}
+C3 {'seed': 44, 'n_features': 23, 'epocas': 20, 'tempo_s': 54.7, 'rmse_21d': 0.11018578708171844, 'mae_21d': 0.08022447675466537, 'dir_21d': 57.795698924731184, 'rmse_63d': 0.19918471574783325, 'mae_63d': 0.1507575362920761, 'dir_63d': 67.47311827956989, 'rmse_126d': 0.2102130651473999, 'mae_126d': 0.17671388387680054, 'dir_126d': 65.32258064516128, 'config': 'sem_b_mercado'}
+C3 {'seed': 42, 'n_features': 22, 'epocas': 19, 'tempo_s': 49.6, 'rmse_21d': 0.10036972910165787, 'mae_21d': 0.07193409651517868, 'dir_21d': 54.3010752688172, 'rmse_63d': 0.1976342797279358, 'mae_63d': 0.16891533136367798, 'dir_63d': 38.44086021505376, 'rmse_126d': 0.22773326933383942, 'mae_126d': 0.20469193160533905, 'dir_126d': 59.67741935483871, 'config': 'sem_c_calendario_selic'}
+C3 {'seed': 43, 'n_features': 22, 'epocas': 16, 'tempo_s': 44.0, 'rmse_21d': 0.10800627619028091, 'mae_21d': 0.07511530816555023, 'dir_21d': 54.83870967741935, 'rmse_63d': 0.19544729590415955, 'mae_63d': 0.158853679895401, 'dir_63d': 51.61290322580645, 'rmse_126d': 0.2514805495738983, 'mae_126d': 0.21134835481643677, 'dir_126d': 52.956989247311824, 'config': 'sem_c_calendario_selic'}
+C3 {'seed': 44, 'n_features': 22, 'epocas': 27, 'tempo_s': 71.3, 'rmse_21d': 0.09664872288703918, 'mae_21d': 0.06777472048997879, 'dir_21d': 61.82795698924731, 'rmse_63d': 0.18270225822925568, 'mae_63d': 0.15828916430473328, 'dir_63d': 56.451612903225815, 'rmse_126d': 0.18655556440353394, 'mae_126d': 0.15116970241069794, 'dir_126d': 71.7741935483871, 'config': 'sem_c_calendario_selic'}
+C3 {'seed': 42, 'n_features': 21, 'epocas': 16, 'tempo_s': 43.1, 'rmse_21d': 0.10585586726665497, 'mae_21d': 0.08362999558448792, 'dir_21d': 43.54838709677419, 'rmse_63d': 0.19782301783561707, 'mae_63d': 0.15443983674049377, 'dir_63d': 62.096774193548384, 'rmse_126d': 0.21354512870311737, 'mae_126d': 0.16963593661785126, 'dir_126d': 67.20430107526882, 'config': 'sem_d_clima'}
+C3 {'seed': 43, 'n_features': 21, 'epocas': 18, 'tempo_s': 30.6, 'rmse_21d': 0.10254308581352234, 'mae_21d': 0.07179073989391327, 'dir_21d': 54.03225806451613, 'rmse_63d': 0.20049600303173065, 'mae_63d': 0.16641181707382202, 'dir_63d': 60.752688172043015, 'rmse_126d': 0.19538655877113342, 'mae_126d': 0.16146020591259003, 'dir_126d': 76.0752688172043, 'config': 'sem_d_clima'}
+C3 {'seed': 44, 'n_features': 21, 'epocas': 17, 'tempo_s': 39.3, 'rmse_21d': 0.10213342308998108, 'mae_21d': 0.07499091327190399, 'dir_21d': 50.26881720430107, 'rmse_63d': 0.15453749895095825, 'mae_63d': 0.12719017267227173, 'dir_63d': 66.12903225806451, 'rmse_126d': 0.13908565044403076, 'mae_126d': 0.11233300715684891, 'dir_126d': 87.63440860215054, 'config': 'sem_d_clima'}
+C3 {'seed': 42, 'n_features': 24, 'epocas': 26, 'tempo_s': 71.2, 'rmse_21d': 0.10134854912757874, 'mae_21d': 0.06926290690898895, 'dir_21d': 61.29032258064516, 'rmse_63d': 0.16047756373882294, 'mae_63d': 0.12007711082696915, 'dir_63d': 73.9247311827957, 'rmse_126d': 0.13688769936561584, 'mae_126d': 0.11241135746240616, 'dir_126d': 77.68817204301075, 'config': 'sem_e_cot'}
+C3 {'seed': 43, 'n_features': 24, 'epocas': 16, 'tempo_s': 46.7, 'rmse_21d': 0.09771731495857239, 'mae_21d': 0.06903254240751266, 'dir_21d': 56.451612903225815, 'rmse_63d': 0.18800263106822968, 'mae_63d': 0.1531783640384674, 'dir_63d': 54.03225806451613, 'rmse_126d': 0.20751509070396423, 'mae_126d': 0.17658299207687378, 'dir_126d': 70.43010752688173, 'config': 'sem_e_cot'}
+C3 {'seed': 44, 'n_features': 24, 'epocas': 17, 'tempo_s': 48.4, 'rmse_21d': 0.1173427477478981, 'mae_21d': 0.08958680182695389, 'dir_21d': 55.107526881720425, 'rmse_63d': 0.20041005313396454, 'mae_63d': 0.16125810146331787, 'dir_63d': 54.83870967741935, 'rmse_126d': 0.16357941925525665, 'mae_126d': 0.13539855182170868, 'dir_126d': 73.38709677419355, 'config': 'sem_e_cot'}
+C3 {'seed': 42, 'n_features': 23, 'epocas': 54, 'tempo_s': 147.0, 'rmse_21d': 0.09500967711210251, 'mae_21d': 0.0652613565325737, 'dir_21d': 58.602150537634415, 'rmse_63d': 0.1633162647485733, 'mae_63d': 0.1342751830816269, 'dir_63d': 69.6236559139785, 'rmse_126d': 0.14887934923171997, 'mae_126d': 0.12188739329576492, 'dir_126d': 87.90322580645162, 'config': 'sem_f_insumos'}
+C3 {'seed': 43, 'n_features': 23, 'epocas': 23, 'tempo_s': 63.0, 'rmse_21d': 0.10721594840288162, 'mae_21d': 0.07609383016824722, 'dir_21d': 51.344086021505376, 'rmse_63d': 0.1926528662443161, 'mae_63d': 0.16934312880039215, 'dir_63d': 57.25806451612904, 'rmse_126d': 0.14080609381198883, 'mae_126d': 0.11958076804876328, 'dir_126d': 79.3010752688172, 'config': 'sem_f_insumos'}
+C3 {'seed': 44, 'n_features': 23, 'epocas': 17, 'tempo_s': 47.8, 'rmse_21d': 0.11883898079395294, 'mae_21d': 0.09266278892755508, 'dir_21d': 37.634408602150536, 'rmse_63d': 0.18144454061985016, 'mae_63d': 0.1465173065662384, 'dir_63d': 53.494623655913976, 'rmse_126d': 0.1581525355577469, 'mae_126d': 0.12985238432884216, 'dir_126d': 82.25806451612904, 'config': 'sem_f_insumos'}
+concluído
+== rq2_rq3
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793798794.037280   25188 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+base ok
+A1 ok
+A2 ok
+A3 ok
+A4 ok
+B1 ok
+B2 ok
+B3 ok
+C2 ok
+D1 ok
+E4 ok
+figuras ok
+concluído
+== eda
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793798823.407843   14904 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+ret_arabica_1d [0.0019 0.0069 0.0047]
+ret_arabica_21d [0.003  0.0155 0.0173]
+ret_robusta_1d [ 0.0025 -0.0002 -0.0044]
+ret_ice_1d [ 0.0009  0.0049 -0.0008]
+ret_ptax_1d [ 0.0002  0.0008 -0.0017]
+preco_vs_ma_1m [0.0022 0.0046 0.0148]
+preco_vs_ma_3m [0.0041 0.0198 0.0067]
+preco_vs_ma_1a [-0.0035 -0.0089  0.005 ]
+preco_vs_ma_2a [0.0113 0.0227 0.0224]
+vol_21d [ 0.0016  0.0022 -0.0003]
+spread_arabica_robusta [ 0.0013  0.0049 -0.0018]
+base_fisico_futuro_pct [0.0075 0.0389 0.0844]
+mes_sin [0.0069 0.0215 0.046 ]
+mes_cos [0.0054 0.0048 0.0291]
+bienalidade_alta [0.0043 0.0345 0.0935]
+selic_meta [ 0.0001  0.0009 -0.0011]
+chuva_arabica_30d [0.0093 0.0185 0.018 ]
+chuva_arabica_90d [-0.0042  0.0007  0.0174]
+tmin_arabica_7d [ 0.0049  0.0049 -0.011 ]
+geada_30d [0. 0. 0.]
+chuva_robusta_90d [0.0021 0.0081 0.0127]
+cot_net_pct_oi [ 0.0003  0.0002 -0.0002]
+cot_net_pct_oi_chg4w [0.0019 0.0014 0.0025]
+indice_troca_urea [0.0135 0.0488 0.0563]
+ret_urea_1a [0.0012 0.0207 0.0441]
+ret_crude_1a [0.0019 0.0072 0.009 ]
+ok
+== nb03
+[NbConvertApp] Converting notebook notebooks/03-lstm.ipynb to notebook
+C:\Users\alexa\Desktop\Faculdade\8° periodo\TCC\Agro Visible\venv\Lib\site-packages\zmq\_future.py:718: RuntimeWarning: Proactor event loop does not implement add_reader family of methods required for zmq. Registering an additional selector thread for add_reader support via tornado. Use `asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())` to avoid this warning.
+  self._get_loop()
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793798845.894319    3456 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+[NbConvertApp] Writing 729140 bytes to notebooks\03-lstm.ipynb
+== nb04
+[NbConvertApp] Converting notebook notebooks/04-decisao.ipynb to notebook
+C:\Users\alexa\Desktop\Faculdade\8° periodo\TCC\Agro Visible\venv\Lib\site-packages\zmq\_future.py:718: RuntimeWarning: Proactor event loop does not implement add_reader family of methods required for zmq. Registering an additional selector thread for add_reader support via tornado. Use `asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())` to avoid this warning.
+  self._get_loop()
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793798939.026421   27260 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+[NbConvertApp] Writing 524965 bytes to notebooks\04-decisao.ipynb
+== nb05
+[NbConvertApp] Converting notebook notebooks/05-safra.ipynb to notebook
+C:\Users\alexa\Desktop\Faculdade\8° periodo\TCC\Agro Visible\venv\Lib\site-packages\zmq\_future.py:718: RuntimeWarning: Proactor event loop does not implement add_reader family of methods required for zmq. Registering an additional selector thread for add_reader support via tornado. Use `asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())` to avoid this warning.
+  self._get_loop()
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793798959.280208   14272 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+[NbConvertApp] Writing 293016 bytes to notebooks\05-safra.ipynb
+== CADEIA CONCLUÍDA

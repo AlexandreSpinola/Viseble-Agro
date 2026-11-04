@@ -1,0 +1,49 @@
+\chapter{\MakeUppercase{Fontes de Dados e Bases de Entrada}}\label{sec:fontes}
+
+O AgroVisible é uma ferramenta orientada a dados, e a qualidade de sua prescrição depende diretamente da qualidade e da coerência temporal das séries que a alimentam. Este capítulo apresenta as quatro famílias de dados que compõem a base de entrada, o papel de cada uma no problema de comercialização e as razões pelas quais foram escolhidas. Os detalhes de coleta, alinhamento e transformação em variáveis de entrada são tratados no \autoref{sec:configuracao}.
+
+\section{Produção Agrícola e Preços Físicos}\label{sec2:fontes-fisico}
+
+O preço que o cafeicultor efetivamente recebe é o do mercado físico, e não a cotação da bolsa. A referência pública para esse preço no Brasil é o indicador CEPEA/ESALQ do café arábica tipo 6, bebida dura, calculado pelo Centro de Estudos Avançados em Economia Aplicada da Universidade de São Paulo a partir da média dos negócios realizados nas principais praças de Minas Gerais e São Paulo, expresso em reais por saca de 60 kg. Esse indicador é o alvo de previsão e o preço de venda em todo o sistema.
+
+O café é um mercado dual. O arábica, cultivado predominantemente em Minas Gerais, São Paulo e Bahia, e o robusta, ou conilon, cultivado no Espírito Santo, em Rondônia e, no exterior, sobretudo no Vietnã, são substitutos parciais na indústria de blends e solúveis. Choques de oferta em um deles deslocam a demanda para o outro, e o diferencial de preço entre as duas variedades carrega informação sobre a direção futura do arábica. Por isso, o indicador CEPEA/ESALQ do robusta, também em R\$/sc, entra na base como variável exógena. O contrato futuro de robusta negociado em Londres foi considerado como alternativa, mas seu ticker foi deslistado na fonte de dados utilizada, e o indicador físico brasileiro o substituiu.
+
+Referências de grãos, como o milho, previstas no planejamento inicial como culturas correlacionadas, não integram a versão final. A decisão foi de escopo: cada cultura adicional exige sua própria cadeia de coleta, alinhamento e validação, e o ganho esperado para a previsão do arábica não justificava o aumento de complexidade dentro do prazo do trabalho. A extensão multicultura é discutida como trabalho futuro no \autoref{sec:conclusao}.
+
+\section{Custos de Produção}\label{sec2:fontes-custos}
+
+O custo operacional efetivo (COE) e o custo operacional total (COT) são os indicadores de custo de produção padronizados pela Companhia Nacional de Abastecimento (CONAB). O COE reúne os desembolsos diretos da safra (insumos, mão de obra, operações mecânicas, colheita e beneficiamento); o COT acrescenta depreciações e remuneração de fatores próprios. Para o produtor, o COE é o piso abaixo do qual a venda gera descapitalização, e a razão entre o preço e o COE é a margem operacional da safra.
+
+A CONAB publica uma série histórica de custos de produção por praça, sistema de cultivo e ano. Este trabalho usa a planilha de Guaxupé, Minas Gerais, centro da principal cooperativa de café do país, e adota o custo variável como COE, o custo operacional como COT e o custo total como referência de lucro normal, na correspondência com a nomenclatura de gestão de custos do módulo de custos do AgroSafety \cite{AgroSafety2026}. Os valores de COE entre as safras de 2022 e 2025 variam de 714 a 876 R\$/sc.
+
+Como \textit{proxy} da pressão de custos ao longo do tempo, a base inclui os preços internacionais mensais da ureia e do petróleo publicados pelo Banco Mundial no relatório \textit{Pink Sheet}. Os fertilizantes nitrogenados são o principal insumo comprado da lavoura de café, e o petróleo antecipa o custo de fertilizantes, defensivos e frete. A relação de troca, expressa em sacas de café necessárias para adquirir uma tonelada de ureia, sintetiza o poder de compra do produtor e é um indicador de pressão sobre a oferta futura: quando a relação de troca piora, tratos culturais são reduzidos e a safra seguinte tende a ser menor.
+
+\section{Clima}\label{sec2:fontes-clima}
+
+A oferta de café é sensível a dois eventos climáticos: a geada de inverno, que destrói a lavoura e cujo efeito mais notório foi a geada de julho de 2021, e a seca durante a floração e o enchimento de grãos, entre setembro e março. Ambos afetam o preço não pela safra em curso, já colhida no momento da decisão, mas pela expectativa sobre a safra seguinte, que o mercado precifica imediatamente.
+
+As variáveis climáticas foram obtidas da reanálise ERA5 por meio da API Open-Meteo, em quatro pontos representativos: Varginha (Sul de Minas), Patrocínio (Cerrado Mineiro) e Franca (Mogiana Paulista) para o arábica, e Colatina (Espírito Santo) para o robusta. As séries diárias de temperatura mínima e precipitação são agregadas em acumulados de chuva de 30 e 90 dias, na mínima das mínimas em sete dias e em um indicador de risco de geada, definido como temperatura mínima abaixo de 3\,$^{\circ}$C entre maio e setembro.
+
+A reanálise foi preferida às estações do Instituto Nacional de Meteorologia (INMET) porque as estações apresentam interrupções de meses em várias localidades ao longo das duas décadas cobertas, o que impediria a construção de acumulados contínuos. A reanálise combina observações e modelo numérico em uma grade regular e contínua, ao custo de uma resolução espacial mais grossa, adequada para capturar eventos regionais como geadas e veranicos, mas não microclimas.
+
+\section{Preço e Histórico Financeiro}\label{sec2:fontes-financeiro}
+
+O café arábica é uma commodity cotada em dólar, e o preço físico no Brasil é, em primeira aproximação, a cotação do contrato \textit{Coffee C} da bolsa ICE de Nova York convertida pela taxa de câmbio, menos um diferencial regional. Três séries financeiras compõem essa relação.
+
+A série do contrato \textit{Coffee C} (código KC), em centavos de dólar por libra-peso, foi obtida pelo Yahoo Finance na forma contínua do primeiro vencimento. A partir de setembro de 2026 passou-se a acumular também a curva completa por vencimento (março, maio, julho, setembro e dezembro), necessária ao módulo de \textit{hedge}. O contrato ICF da B3, referência doméstica de futuros de café, não possui série histórica pública com profundidade suficiente, e o contrato da ICE convertido em reais é adotado como seu \textit{proxy}.
+
+A taxa de câmbio adotada é a PTAX de venda, publicada pelo Banco Central do Brasil, e não a cotação comercial de fechamento, porque a PTAX é a referência contratual para liquidação de operações de câmbio e de contratos futuros. A meta da taxa Selic, também do Banco Central, cumpre dois papéis: é variável exógena do módulo preditivo, por capturar o ciclo macroeconômico, e é a taxa de desconto do módulo prescritivo, por representar o custo de oportunidade do capital imobilizado no estoque.
+
+Por fim, a base inclui o relatório \textit{Commitments of Traders} da CFTC, o regulador norte-americano de derivativos, que informa semanalmente a posição líquida dos fundos especulativos no contrato \textit{Coffee C}. Essa posição, expressa em percentual do total de contratos em aberto, é um indicador do posicionamento do capital financeiro na commodity e antecipa reversões quando atinge extremos.
+
+\section{Geografia e Base Regional}\label{sec2:fontes-base}
+
+A base é a diferença entre o preço físico recebido pelo produtor e a cotação futura convertida para a mesma unidade. Ela reflete custos de frete e logística até o porto, diferenciais de qualidade entre o café brasileiro e o padrão de entrega do contrato, e condições de oferta e demanda locais. A base varia ao longo do ano, com padrão sazonal ligado ao calendário da colheita, e apresenta choques imprevisíveis que constituem o risco de base: um produtor que trava o preço em bolsa continua exposto a esse risco.
+
+Neste trabalho a base é calculada como a diferença percentual entre o indicador CEPEA/ESALQ e o contrato \textit{Coffee C} convertido para reais por saca, pela fórmula
+\begin{equation}
+	F_{\text{R\$/sc}} = \frac{F_{\text{¢/lb}}}{100} \times 132{,}277 \times \text{PTAX},
+\end{equation}
+em que 132,277 é o número de libras-peso em uma saca de 60 kg. A modelagem em percentual, e não em reais, decorre da constatação de que a base em reais cresce com o nível de preço: em média, o físico negocia cerca de 20\,\% abaixo do futuro convertido desde 2015, o que equivalia a cerca de 200 R\$/sc naquele período e a mais de 300 R\$/sc no patamar de preços de 2023 em diante.
+
+A base regional no sentido estrito, isto é, o diferencial entre o indicador CEPEA/ESALQ e o preço de balcão de uma cooperativa específica em Minas Gerais, não é modelada, por inexistir série pública com essa granularidade. O indicador CEPEA/ESALQ é tratado como o preço do produtor mineiro, simplificação cujas consequências são discutidas no \autoref{sec:ameacas}.

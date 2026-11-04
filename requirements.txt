@@ -1,0 +1,32 @@
+# Manipulação de dados
+pandas
+numpy
+
+# Coleta de dados
+yfinance
+python-bcb
+requests
+xlrd
+openpyxl
+cot-reports
+openmeteo-requests
+requests-cache
+retry-requests
+
+# Modelagem (LSTM)
+tensorflow
+scikit-learn
+scipy
+statsmodels
+reportlab
+
+# Grafos (motor prescritivo)
+networkx
+
+# Visualização
+matplotlib
+seaborn
+
+# Notebooks
+jupyter
+ipykernel

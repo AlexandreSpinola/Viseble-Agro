@@ -1,0 +1,14 @@
+f1,f2,spearman
+ret_arabica_1d,ret_ice_1d,0.73
+ret_arabica_21d,preco_vs_ma_1m,0.846
+ret_arabica_21d,preco_vs_ma_3m,0.814
+preco_vs_ma_1m,preco_vs_ma_3m,0.738
+preco_vs_ma_1a,preco_vs_ma_2a,0.902
+mes_sin,chuva_arabica_90d,0.794
+mes_sin,chuva_robusta_90d,0.7
+mes_cos,chuva_arabica_30d,0.755
+mes_cos,tmin_arabica_7d,0.768
+chuva_arabica_30d,chuva_arabica_90d,0.828
+chuva_arabica_30d,tmin_arabica_7d,0.742
+chuva_arabica_30d,chuva_robusta_90d,0.727
+chuva_arabica_90d,chuva_robusta_90d,0.863

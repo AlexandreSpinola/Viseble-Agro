@@ -1,0 +1,31 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793038109.177531   48472 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+ret_arabica_1d [-0.0018 -0.0009 -0.0017]
+ret_arabica_21d [ 0.0006 -0.003   0.0113]
+ret_robusta_1d [ 0.0055  0.0043 -0.002 ]
+ret_ice_1d [-0.0017  0.0035 -0.006 ]
+ret_ptax_1d [ 0.002  -0.0007  0.0062]
+preco_vs_ma_1m [-0.0005 -0.0028  0.012 ]
+preco_vs_ma_3m [-0.0006  0.0112 -0.004 ]
+preco_vs_ma_1a [-0.0053 -0.0096 -0.0056]
+preco_vs_ma_2a [0.0114 0.0369 0.0462]
+vol_21d [0.003  0.0119 0.0106]
+spread_arabica_robusta [-0.0006  0.0024 -0.    ]
+base_fisico_futuro_pct [0.0038 0.0031 0.0425]
+mes_sin [-0.0003 -0.      0.0037]
+mes_cos [ 0.0036 -0.0008  0.0138]
+bienalidade_alta [0.0019 0.0005 0.0323]
+selic_meta [ 0.     -0.001   0.0016]
+chuva_arabica_30d [0.0063 0.0118 0.0073]
+chuva_arabica_90d [0.0005 0.0046 0.0221]
+tmin_arabica_7d [-0.0019 -0.0111  0.002 ]
+geada_30d [0. 0. 0.]
+chuva_robusta_90d [ 0.0126  0.0002 -0.0102]
+cot_net_pct_oi [ 0.0006 -0.007  -0.0063]
+cot_net_pct_oi_chg4w [0.0073 0.0003 0.0058]
+indice_troca_urea [0.0018 0.0188 0.0099]
+ret_urea_1a [0.0159 0.0067 0.0237]
+ret_crude_1a [0.0054 0.0032 0.0108]
+ok
