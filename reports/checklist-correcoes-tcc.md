@@ -33,15 +33,15 @@ Legenda: **[EXP]** depende do chat de experimentos ou de execução pelo autor; 
 
 ## 4. Seção 4: Configuração (`04-configuracao.tex`)
 
-- [ ] **[TXT]** Quadro `qua:lstm`: LSTM(32, seq) → Dropout 0,4 → LSTM(16) → Dropout 0,4 → Dense(32) → Dense(3). Parada na época 26. Dizer que a configuração foi escolhida por busca (nova subseção) e que a inicial era 64/32, dropout 0,2.
-- [ ] **[TXT]** Quadro `qua:features`, linha `geada_30d`: marcar como constante zero na amostra (inerte, mantida entre as 26 entradas para rastreabilidade; importância por permutação nula).
-- [ ] **[TXT]** Nova subseção "Análise exploratória das variáveis": Spearman feature × alvo por horizonte (F1, fig. 10), pares colineares |ρ| > 0,7 (F2, fig. 11), importância por permutação no modelo final (F3, fig. 12). Mensagem: sinal em oferta (chuva, Tmin), base, calendário, Selic e insumos, crescente com o horizonte; retornos diários/21 d, médias de 1–3 m e volatilidade com |ρ| < 0,04.
-- [ ] **[TXT]** Nova subseção "Busca de hiperparâmetros": grade F4 (12 configurações, seed 42, um fator por vez: unidades 32/64/128, dropout 0/0,2/0,4, janela 21/63/126, lr 3e-4/1e-3/3e-3, batch 32/64) + verificação F5 (3 candidatas × 5 seeds, validação e teste, com baselines). Tabela com média ± desvio. Mensagem: só o tamanho da rede importa; 128 é a pior; dropout 0 piora; RMSE de treino 0,029 (inicial) vs 0,047 (final). Declarar que a seleção foi feita na validação e que o teste permaneceu cego.
-- [ ] **[TXT]** Protocolo RQ1: acrescentar busca de hiperparâmetros, 5 seeds por candidata, Spearman e permutação. Ablação continua com 3 seeds e o modelo final.
-- [ ] **[TXT]** Protocolo RQ2: acrescentar a simulação por safra (notebook 05): colheita em 1º de julho, horizonte de 12 meses, política rolante mensal, 4 safras (2 cegas).
-- [ ] **[TXT]** Parágrafo "Operação em tempo real": política rolante mensal; a cada mês uma nova previsão substitui a anterior; a rede só recebe dados já observados; o produtor recebe gatilho por mês, não data única.
-- [ ] **[TXT]** Ambiente: "quatro cadernos" → cinco (coleta, variáveis, previsão, decisão, safra); versões (E5): Python 3.13, TensorFlow 2.21, Keras 3.15, NumPy 2.5, pandas 3.0, scikit-learn 1.9, statsmodels 0.15.
-- [ ] **[TXT]** Tabela de parâmetros: manter 10 % a.a. como caso base; COE CONAB por safra. Conferir.
+- [x] **[TXT]** Quadro `qua:lstm`: LSTM(32, seq) → Dropout 0,4 → LSTM(16) → Dropout 0,4 → Dense(32) → Dense(3). Parada na época 26. Dizer que a configuração foi escolhida por busca (nova subseção) e que a inicial era 64/32, dropout 0,2.
+- [x] **[TXT]** Quadro `qua:features`, linha `geada_30d`: marcar como constante zero na amostra (inerte, mantida entre as 26 entradas para rastreabilidade; importância por permutação nula).
+- [x] **[TXT]** Nova subseção "Análise exploratória das variáveis": Spearman feature × alvo por horizonte (F1, fig. 10), pares colineares |ρ| > 0,7 (F2, fig. 11), importância por permutação no modelo final (F3, fig. 12). Mensagem: sinal em oferta (chuva, Tmin), base, calendário, Selic e insumos, crescente com o horizonte; retornos diários/21 d, médias de 1–3 m e volatilidade com |ρ| < 0,04.
+- [x] **[TXT]** Nova subseção "Busca de hiperparâmetros": grade F4 (12 configurações, seed 42, um fator por vez: unidades 32/64/128, dropout 0/0,2/0,4, janela 21/63/126, lr 3e-4/1e-3/3e-3, batch 32/64) + verificação F5 (3 candidatas × 5 seeds, validação e teste, com baselines). Tabela com média ± desvio. Mensagem: só o tamanho da rede importa; 128 é a pior; dropout 0 piora; RMSE de treino 0,029 (inicial) vs 0,047 (final). Declarar que a seleção foi feita na validação e que o teste permaneceu cego.
+- [x] **[TXT]** Protocolo RQ1: acrescentar busca de hiperparâmetros, 5 seeds por candidata, Spearman e permutação. Ablação continua com 3 seeds e o modelo final.
+- [x] **[TXT]** Protocolo RQ2: acrescentar a simulação por safra (notebook 05): colheita em 1º de julho, horizonte de 12 meses, política rolante mensal, 4 safras (2 cegas).
+- [x] **[TXT]** Parágrafo "Operação em tempo real": política rolante mensal; a cada mês uma nova previsão substitui a anterior; a rede só recebe dados já observados; o produtor recebe gatilho por mês, não data única.
+- [x] **[TXT]** Ambiente: "quatro cadernos" → cinco (coleta, variáveis, previsão, decisão, safra); versões (E5): Python 3.13, TensorFlow 2.21, Keras 3.15, NumPy 2.5, pandas 3.0, scikit-learn 1.9, statsmodels 0.15.
+- [x] **[TXT]** Tabela de parâmetros: manter 10 % a.a. como caso base; COE CONAB por safra. Conferir.
 
 ## 5. Seção 5: Resultados (`05-resultados.tex`)
 
